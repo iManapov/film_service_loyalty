@@ -55,7 +55,7 @@ class Discount(UUIDMixin, TimeStampedMixin):
     period_end = models.DateField(_('end_date'))
 
     def __str__(self):
-        return _(f'Discount {self.id}')
+        return f"{_('Discount')} {self.id}"
 
     class Meta:
         db_table = f"{settings.DB_SCHEME}\".\"discount"
@@ -64,19 +64,21 @@ class Discount(UUIDMixin, TimeStampedMixin):
 
 
 class Order(UUIDMixin, TimeStampedMixin):
-    discount = models.ForeignKey(Subscription,
-                                 verbose_name=_('subscription'),
-                                 on_delete=models.DO_NOTHING)
-    user = models.UUIDField(_('user'), editable=False)
+    subscription = models.ForeignKey(Subscription,
+                                     verbose_name=_('subscription'),
+                                     on_delete=models.DO_NOTHING)
+    discount = models.ForeignKey(Discount,
+                                 verbose_name=_('discount'),
+                                 on_delete=models.DO_NOTHING,
+                                 blank=True, null=True)
+    user = models.UUIDField(_('user'))
     status = models.IntegerField(_('status'), choices=Status.choices)
     amount = models.IntegerField(_('amount'), validators=[MinValueValidator(0),])
 
     def __str__(self):
-        return _(f'Order {self.id}')
+        return f"{_('Order')} {self.id}"
 
     class Meta:
         db_table = f"{settings.DB_SCHEME}\".\"order"
         verbose_name = _('Order')
         verbose_name_plural = _('Orders')
-
-
