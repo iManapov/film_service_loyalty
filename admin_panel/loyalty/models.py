@@ -14,6 +14,11 @@ class Status(models.IntegerChoices):
     CANCELED = 3, _('CANCELED')
 
 
+class Measure(models.TextChoices):
+    PERCENT = _('%'), _('%')
+    RUB = _('RUB'), _('RUB')
+
+
 class UUIDMixin(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
@@ -44,41 +49,73 @@ class Subscription(UUIDMixin, TimeStampedMixin):
         verbose_name_plural = _('Subscriptions')
 
 
-class Discount(UUIDMixin, TimeStampedMixin):
+class DiscountSubscription(UUIDMixin, TimeStampedMixin):
     title = models.CharField(_('title'), max_length=50)
     subscription = models.ForeignKey(Subscription,
                                      verbose_name=_('subscription'),
                                      on_delete=models.CASCADE)
     value = models.IntegerField(_('value'), validators=[MinValueValidator(0),])
     enabled = models.BooleanField(_('enabled'), default=False)
-    period_begin = models.DateField(_('start_date'))
-    period_end = models.DateField(_('end_date'))
+    period_begin = models.DateTimeField(_('start_date'))
+    period_end = models.DateTimeField(_('end_date'))
 
     def __str__(self):
-        return f"{_('Discount')} {self.id}"
+        return f"{_('SubscriptionDiscount')} {self.id}"
 
     class Meta:
-        db_table = f"{settings.DB_SCHEME}\".\"discount"
-        verbose_name = _('Discount')
-        verbose_name_plural = _('Discounts')
+        db_table = f"{settings.DB_SCHEME}\".\"discount_subscription"
+        verbose_name = _('Subscription discount')
+        verbose_name_plural = _('Subscription discounts')
 
 
-class Order(UUIDMixin, TimeStampedMixin):
+class DiscountFilms(UUIDMixin, TimeStampedMixin):
+    title = models.CharField(_('title'), max_length=50)
+    tag = models.CharField(_('tag'), max_length=50)
     subscription = models.ForeignKey(Subscription,
                                      verbose_name=_('subscription'),
-                                     on_delete=models.DO_NOTHING)
-    discount = models.ForeignKey(Discount,
-                                 verbose_name=_('discount'),
-                                 on_delete=models.DO_NOTHING,
-                                 blank=True, null=True)
-    user = models.UUIDField(_('user'))
-    status = models.IntegerField(_('status'), choices=Status.choices)
-    amount = models.IntegerField(_('amount'), validators=[MinValueValidator(0),])
+                                     on_delete=models.CASCADE)
+    value = models.IntegerField(_('value'), validators=[MinValueValidator(0),])
+    enabled = models.BooleanField(_('enabled'), default=False)
+    period_begin = models.DateTimeField(_('start_date'))
+    period_end = models.DateTimeField(_('end_date'))
 
     def __str__(self):
-        return f"{_('Order')} {self.id}"
+        return f"{_('FilmDiscount')} {self.id}"
 
     class Meta:
-        db_table = f"{settings.DB_SCHEME}\".\"order"
-        verbose_name = _('Order')
-        verbose_name_plural = _('Orders')
+        db_table = f"{settings.DB_SCHEME}\".\"discount_film"
+        verbose_name = _('Film discount')
+        verbose_name_plural = _('Film discounts')
+
+
+class Promocode(UUIDMixin, TimeStampedMixin):
+    user_id = models.UUIDField(_('user'))
+    value = models.FloatField(_('value'), validators=[MinValueValidator(0),])
+    code = models.CharField(_('code'), max_length=50)
+    expiration_date = models.DateTimeField(_('expiration_date'))
+    measure = models.CharField(_('measure'), max_length=5, choices=Measure.choices)
+    is_multiple = models.BooleanField(_('is_multiple'), default=False)
+
+    def __str__(self):
+        return f"{_('Promocode')} {self.id}"
+
+    class Meta:
+        db_table = f"{settings.DB_SCHEME}\".\"promocode"
+        verbose_name = _('Promocode')
+        verbose_name_plural = _('Promocodes')
+
+
+class PromoUsage(UUIDMixin, TimeStampedMixin):
+    promo = models.ForeignKey(Promocode,
+                              verbose_name=_('promo'),
+                              on_delete=models.CASCADE)
+    user_id = models.UUIDField(_('user'))
+    used_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{_('User ')} {self.user_id} {_(' used promocode ')} {self.promo}"
+
+    class Meta:
+        db_table = f"{settings.DB_SCHEME}\".\"promo_usage"
+        verbose_name = _('PromoUsage')
+        verbose_name_plural = _('PromoUsages')

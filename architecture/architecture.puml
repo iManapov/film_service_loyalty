@@ -1,0 +1,56 @@
+@startuml
+skinparam componentStyle uml2
+actor Пользователь as User
+actor Администратор as Admin
+
+
+component "Сервис системы лояльности" as LoyaltyService #Yellow {
+    component "AdminPanel" {
+        [Backend (Django)] as Django
+    }
+
+    component "API" as API
+
+    database "Redis" as Redis {
+        [Кэширование информации о покупках, скидках и промокодах] as PromocodeStorage
+    }
+    database "PostgreSQL" as PostgreSQL {
+        [Хранение информации о покупках, скидках и промокодах] as Orders
+    }
+}
+
+component "WebApp" as WebApp
+
+
+component "Сервисы онлайн-кинотеатра" as OtherServices {
+    component "Сервис контента" as ContentService
+    component "Сервис авторизации" as AuthService
+    component "Сервис нотификации" as NotificationService
+    component "Сервис биллинга" as BillingService
+}
+
+interface JWT_SECRET
+note left of JWT_SECRET
+    Сервисы используют общий JWT Secret
+    для генерации/проверки токена соответственно
+end note
+
+
+Admin -down-> AdminPanel: Управление скидками и промокодами
+User --> WebApp: Запрос на создание заказа
+WebApp --> ContentService: Запрос на получение контента
+ContentService <--> API
+API <--> PostgreSQL
+API <--> Redis
+Django <--> PostgreSQL
+API ..> NotificationService: Отправка уведомления
+NotificationService ..> User: Отправка уведомления
+ContentService ..> BillingService: Информация для оплаты заказа
+BillingService ..> NotificationService: Отправка уведомления
+BillingService <-down-> API
+
+LoyaltyService .up. JWT_SECRET
+AuthService .down. JWT_SECRET
+
+
+@enduml
