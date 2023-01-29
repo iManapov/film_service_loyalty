@@ -1,9 +1,0 @@
-orjson==3.8.5
-pip==22.3.1
-pydantic==1.10.4
-setuptools==66.1.1
-typing-extensions==4.4.0
-wheel==0.38.4
-
-fastapi==0.89.1
-aioredis==2.0.1
