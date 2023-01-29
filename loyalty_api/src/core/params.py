@@ -9,29 +9,21 @@ class Params:
     """
     Класс параметров запроса API
     """
-    sort: Query = Query(
-        default=None,
-        title="Параметры, по которым осуществляется сортировка"
-    )
 
-    limit: Query = Query(
-        default=50,
-        title="Размер страницы",
-        alias="page[size]",
-        ge=1,
-        le=100
-    )
-
-    page: Query = Query(
-        default=1,
-        title="Номер страницы",
-        alias="page[number]",
-        ge=1
-    )
-
-    query: Query = Query(
+    user_id: Query = Query(
         default=Required,
-        title="Поисковый запрос"
+        title="Id пользователя"
+    )
+
+    price: Query = Query(
+        default=Required,
+        title="Цена фильма/подписки",
+        ge=0
+    )
+
+    promo_code: Query = Query(
+        default=Required,
+        title="Код промокода"
     )
 
     promo_id: Path = Path(
@@ -39,19 +31,5 @@ class Params:
         title="UUID промокода"
     )
 
-    genre: Query = Query(
-        default=None,
-        title="UUID жанра для фильтрации фильмов"
-    )
-
-    person_id: Path = Path(
-        default=Required,
-        title="UUID персоны"
-    )
-
-    genre_id: Path = Path(
-        default=Required,
-        title="UUID жанра"
-    )
 
 params = Params()
