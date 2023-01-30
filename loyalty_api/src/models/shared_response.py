@@ -1,5 +1,8 @@
-from pydantic import BaseModel
+from src.models.mixin import JsonMixin
 
 
-class MessageResponseModel(BaseModel):
+class MessageResponseModel(JsonMixin):
     msg: str
+
+
+

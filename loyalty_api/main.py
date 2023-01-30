@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 import httpx
 
-from src.api.v1 import promo_code
+from src.api.v1 import promo_code, subscription, discount
 from src.core.config import settings
 from src.core.logger import LOGGING
 from src.db import redis, postgres, request
@@ -44,7 +44,9 @@ async def shutdown():
 
 
 # Подключаем роутер к серверу, указав префикс /v1/promo_codes
-app.include_router(promo_code.router, prefix='/api/v1/promocodes', tags=['promo_codes'])
+app.include_router(promo_code.router, prefix='/api/v1/promocodes', tags=['Promo codes'])
+app.include_router(subscription.router, prefix='/api/v1/subscriptions', tags=['Subscriptions'])
+app.include_router(discount.router, prefix='/api/v1/discounts', tags=['Discounts'])
 
 
 if __name__ == '__main__':

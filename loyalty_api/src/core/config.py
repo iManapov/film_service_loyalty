@@ -14,7 +14,8 @@ class Settings(BaseSettings):
 
     project_name: str = Field('Loyalty API', env="PROJECT_NAME")
     subscriber_discount: int = 20
-    user_cache_expire_in_seconds = 60 * 60  # 1 hour
+    user_cache_expire_in_seconds = 1 * 60  # 1 minute
+    discount_cache_expire_in_seconds = 5 * 60  # 1 minute
 
     redis_host: str = Field('127.0.0.1', env="REDIS_HOST")
     redis_port: int = Field('6379', env="REDIS_PORT")
@@ -25,7 +26,7 @@ class Settings(BaseSettings):
     postgres_user: str = Field(..., env='POSTGRES_USER')
     postgres_pswd: str = Field(..., env='POSTGRES_PSWD')
 
-    auth_api_url: str = Field('http:localhost:5001/api/v1', env='AUTH_API_URL')
+    auth_api_url: str = Field('http://localhost:5001/api/v1', env='AUTH_API_URL')
 
     def get_postgres_url(self):
         return f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_pswd}@{self.postgres_host}:" \

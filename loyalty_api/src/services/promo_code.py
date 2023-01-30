@@ -66,4 +66,5 @@ def get_promo_service(
     Провайдер PromoCodeService,
     с помощью Depends он сообщает, что ему необходимы Database
     """
+
     return PromoCodeService(postgres)

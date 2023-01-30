@@ -31,5 +31,15 @@ class Params:
         title="UUID промокода"
     )
 
+    subs_id: Path = Path(
+        default=Required,
+        title="UUID подписки"
+    )
+
+    film_tag: Query = Query(
+        default=Required,
+        title="Тэг фильма"
+    )
+
 
 params = Params()
