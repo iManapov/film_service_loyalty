@@ -7,13 +7,6 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from config import settings
 
 
-class Status(models.IntegerChoices):
-    CREATED = 0, _('CREATED')
-    IN_PROCESS = 1, _('IN_PROCESS')
-    PAID = 2, _('PAID')
-    CANCELED = 3, _('CANCELED')
-
-
 class Measure(models.TextChoices):
     PERCENT = _('%'), _('%')
     RUB = _('RUB'), _('RUB')
@@ -60,7 +53,7 @@ class DiscountSubscription(UUIDMixin, TimeStampedMixin):
     period_end = models.DateTimeField(_('end_date'))
 
     def __str__(self):
-        return f"{_('SubscriptionDiscount')} {self.id}"
+        return self.title
 
     class Meta:
         db_table = f"{settings.DB_SCHEME}\".\"discount_subscription"
@@ -68,19 +61,16 @@ class DiscountSubscription(UUIDMixin, TimeStampedMixin):
         verbose_name_plural = _('Subscription discounts')
 
 
-class DiscountFilms(UUIDMixin, TimeStampedMixin):
+class DiscountFilm(UUIDMixin, TimeStampedMixin):
     title = models.CharField(_('title'), max_length=50)
-    tag = models.CharField(_('tag'), max_length=50)
-    subscription = models.ForeignKey(Subscription,
-                                     verbose_name=_('subscription'),
-                                     on_delete=models.CASCADE)
+    tag = models.CharField(_('tag'), unique=True, max_length=50)
     value = models.IntegerField(_('value'), validators=[MinValueValidator(0),])
     enabled = models.BooleanField(_('enabled'), default=False)
     period_begin = models.DateTimeField(_('start_date'))
     period_end = models.DateTimeField(_('end_date'))
 
     def __str__(self):
-        return f"{_('FilmDiscount')} {self.id}"
+        return self.title
 
     class Meta:
         db_table = f"{settings.DB_SCHEME}\".\"discount_film"
@@ -89,7 +79,7 @@ class DiscountFilms(UUIDMixin, TimeStampedMixin):
 
 
 class Promocode(UUIDMixin, TimeStampedMixin):
-    user_id = models.UUIDField(_('user'))
+    user_id = models.UUIDField(_('user'), blank=True, null=True)
     value = models.FloatField(_('value'), validators=[MinValueValidator(0),])
     code = models.CharField(_('code'), max_length=50)
     expiration_date = models.DateTimeField(_('expiration_date'))
@@ -103,14 +93,18 @@ class Promocode(UUIDMixin, TimeStampedMixin):
         db_table = f"{settings.DB_SCHEME}\".\"promocode"
         verbose_name = _('Promocode')
         verbose_name_plural = _('Promocodes')
+        constraints = [
+            models.UniqueConstraint(fields=['user_id', 'code', ],
+                                    name='user_code_constraint')
+        ]
 
 
-class PromoUsage(UUIDMixin, TimeStampedMixin):
+class PromoUsage(UUIDMixin):
     promo = models.ForeignKey(Promocode,
                               verbose_name=_('promo'),
-                              on_delete=models.CASCADE)
+                              on_delete=models.DO_NOTHING)
     user_id = models.UUIDField(_('user'))
-    used_at = models.DateTimeField(auto_now_add=True)
+    used_at = models.DateTimeField(_('used_at'), auto_now_add=True)
 
     def __str__(self):
         return f"{_('User ')} {self.user_id} {_(' used promocode ')} {self.promo}"
@@ -119,3 +113,35 @@ class PromoUsage(UUIDMixin, TimeStampedMixin):
         db_table = f"{settings.DB_SCHEME}\".\"promo_usage"
         verbose_name = _('PromoUsage')
         verbose_name_plural = _('PromoUsages')
+
+
+class DiscountSubscriptionUsage(UUIDMixin):
+    discount = models.ForeignKey(DiscountSubscription,
+                                 verbose_name=_('discount'),
+                                 on_delete=models.DO_NOTHING)
+    user_id = models.UUIDField(_('user'))
+    used_at = models.DateTimeField(_('used_at'), auto_now_add=True)
+
+    def __str__(self):
+        return f"{_('User ')} {self.user_id} {_(' used subscription discount ')} {self.discount.title}"
+
+    class Meta:
+        db_table = f"{settings.DB_SCHEME}\".\"discount_subscription_usage"
+        verbose_name = _('Discount Subscription Usage')
+        verbose_name_plural = _('Discount Subscription Usages')
+
+
+class DiscountFilmUsage(UUIDMixin):
+    discount = models.ForeignKey(DiscountFilm,
+                                 verbose_name=_('discount'),
+                                 on_delete=models.DO_NOTHING)
+    user_id = models.UUIDField(_('user'))
+    used_at = models.DateTimeField(_('used_at'), auto_now_add=True)
+
+    def __str__(self):
+        return f"{_('User ')} {self.user_id} {_(' used film discount ')} {self.discount.title}"
+
+    class Meta:
+        db_table = f"{settings.DB_SCHEME}\".\"discount_film_usage"
+        verbose_name = _('Discount Film Usage')
+        verbose_name_plural = _('Discount Film Usages')
