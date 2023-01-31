@@ -8,6 +8,7 @@ from sqlalchemy.sql import func
 from src.models.mixin import JsonMixin
 
 
+"""Модель промокода в бд"""
 PromoCode = sqlalchemy.Table(
     "promocode",
     sqlalchemy.MetaData(),
@@ -23,6 +24,7 @@ PromoCode = sqlalchemy.Table(
 )
 
 
+"""Модель использования промокода в бд"""
 PromoUsage = sqlalchemy.Table(
     "promo_usage",
     sqlalchemy.MetaData(),
@@ -34,8 +36,8 @@ PromoUsage = sqlalchemy.Table(
 
 
 class BasePromoApi(JsonMixin):
-    """
-    """
+    """Модель промокода"""
+
     id: uuid.UUID
     user_id: uuid.UUID
     code: str
@@ -48,6 +50,8 @@ class BasePromoApi(JsonMixin):
 
 
 class PromoPriceApi(JsonMixin):
+    """Модель ответа после применения промокода"""
+
     price_before: float
     price_after: float
     promo_code: str

@@ -1,8 +1,8 @@
 import uuid
 import datetime
 
-from fastapi import Depends
 from databases import Database
+from fastapi import Depends
 from sqlalchemy import and_
 
 from src.core.error_messages import error_msgs
@@ -12,15 +12,31 @@ from src.services.subscription import SubscriptionService, get_subscription_serv
 
 
 class SubsDiscountService:
+    """Сервис взаимодействия со скидкой к подписке"""
+
     def __init__(self, postgres: Database, subs_service: SubscriptionService):
         self.postgres = postgres
         self.subs = subs_service
 
-    async def get_discount_by_id(self, discount_id: uuid.UUID):
+    async def get_discount_by_id(self, discount_id: uuid.UUID) -> SubsDiscount:
+        """
+        Получение скидки по его id
+
+        :param discount_id: id скидки
+        :return: скидка
+        """
+
         query = SubsDiscount.select().filter(SubsDiscount.c.id == discount_id)
         return await self.postgres.fetch_one(query=query)
 
     async def get_discount_for_sub(self, subs_id: uuid.UUID) -> SubsDiscount:
+        """
+        Получение скидки к подписке по id подписки
+
+        :param subs_id: id подписки
+        :return: скидка
+        """
+
         query = SubsDiscount.select().filter(
             and_(SubsDiscount.c.subscription_id == subs_id,
                  SubsDiscount.c.period_begin <= datetime.datetime.today(),
@@ -31,6 +47,13 @@ class SubsDiscountService:
         return await self.postgres.fetch_one(query=query)
 
     async def calc_price(self, subs_id: uuid.UUID) -> tuple[bool, SubsDiscountResponseApi]:
+        """
+        Вычисление цены подписки после скидки
+
+        :param subs_id: id подписки
+        :return: цена после скидки
+        """
+
         subs = await self.subs.get_subscription_by_id(subs_id=subs_id)
         if not subs:
             return False, error_msgs.no_subs
@@ -51,6 +74,13 @@ class SubsDiscountService:
         )
 
     async def mark_discount_as_used(self, discount_id: uuid.UUID, user_id: uuid.UUID):
+        """
+        Отметить скидку discount_id как использованную пользователем user_id
+
+        :param discount_id: id скидки
+        :param user_id: id пользователя
+        """
+
         query = SubsDiscountUsage.insert().values(
             id=uuid.uuid4(),
             user_id=user_id,
@@ -66,6 +96,6 @@ def get_sub_discount_service(
 ) -> SubsDiscountService:
     """
     Провайдер SubsDiscountService,
-    с помощью Depends он сообщает, что ему необходимы Database
+    с помощью Depends он сообщает, что ему необходимы Database и SubscriptionService
     """
     return SubsDiscountService(postgres, subs_service)

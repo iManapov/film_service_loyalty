@@ -7,6 +7,7 @@ from sqlalchemy.sql import func
 from src.models.mixin import JsonMixin
 
 
+"""Модель подписки в бд"""
 Subscription = sqlalchemy.Table(
     "subscription",
     sqlalchemy.MetaData(),
@@ -21,9 +22,7 @@ Subscription = sqlalchemy.Table(
 
 
 class SubscriptionApi(JsonMixin):
-    """
-    API-Модель для подробного описания подписок
-    """
+    """API-Модель для подробного описания подписок"""
 
     id: uuid.UUID
     name: str

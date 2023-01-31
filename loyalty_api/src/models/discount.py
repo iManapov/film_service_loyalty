@@ -8,6 +8,7 @@ from typing import Optional
 from src.models.mixin import JsonMixin
 
 
+"""Модель скидки к подписке в бд"""
 SubsDiscount = sqlalchemy.Table(
         "discount_subscription",
         sqlalchemy.MetaData(),
@@ -23,6 +24,7 @@ SubsDiscount = sqlalchemy.Table(
 )
 
 
+"""Модель скидки к фильму в бд"""
 FilmsDiscount = sqlalchemy.Table(
         "discount_film",
         sqlalchemy.MetaData(),
@@ -37,6 +39,8 @@ FilmsDiscount = sqlalchemy.Table(
         sqlalchemy.Column("updated_at", sqlalchemy.DateTime(timezone=True), onupdate=func.now())
 )
 
+
+"""Модель использования скидок к подписке"""
 SubsDiscountUsage = sqlalchemy.Table(
     "discount_subscription_usage",
     sqlalchemy.MetaData(),
@@ -46,6 +50,8 @@ SubsDiscountUsage = sqlalchemy.Table(
     sqlalchemy.Column("used_at", sqlalchemy.DateTime(timezone=True), nullable=False),
 )
 
+
+"""Модель использования скидок к фильму"""
 FilmsDiscountUsage = sqlalchemy.Table(
     "discount_film_usage",
     sqlalchemy.MetaData(),
@@ -57,6 +63,8 @@ FilmsDiscountUsage = sqlalchemy.Table(
 
 
 class SubsDiscountModel(JsonMixin):
+    """Модель скидки к подписке"""
+
     id: uuid.UUID
     subscription_id: uuid.UUID
     value: float
@@ -70,6 +78,8 @@ class SubsDiscountModel(JsonMixin):
 
 # Redis
 class FilmDiscountModel(JsonMixin):
+    """Модель скидки к фильму"""
+
     id: uuid.UUID
     tag: str  # key in redis
     value: float
@@ -82,6 +92,8 @@ class FilmDiscountModel(JsonMixin):
 
 
 class SubsDiscountResponseApi(JsonMixin):
+    """Модель ответа после применения скидки к подписке"""
+
     discount_id: Optional[uuid.UUID]
     subscription_id: uuid.UUID
     price_before: float
@@ -89,10 +101,11 @@ class SubsDiscountResponseApi(JsonMixin):
 
 
 class FilmDiscountResponseApi(JsonMixin):
+    """Модель ответа после применения скидки к фильму"""
+
     discount_id: Optional[uuid.UUID]
     tag: str
     user_id: uuid.UUID
     subscriber_discount: int
     price_before: float
     price_after: float
-

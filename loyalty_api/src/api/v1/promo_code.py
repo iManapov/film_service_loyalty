@@ -3,11 +3,11 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from src.services.promo_code import PromoCodeService, get_promo_service
-from src.core.params import params
 from src.core.error_messages import error_msgs
+from src.core.params import params
 from src.models.promo_code import PromoCode, BasePromoApi, PromoPriceApi
 from src.models.shared import MessageResponseModel, UserIdBody
+from src.services.promo_code import PromoCodeService, get_promo_service
 
 
 router = APIRouter()
@@ -23,8 +23,13 @@ async def get_promo_by_code(
         promo_service: PromoCodeService = Depends(get_promo_service)
 ) -> PromoCode:
     """
-    Возвращает информацию промокода по коду
+    Возвращает информацию промокода по коду.
+
+    :param promo_code: промокод
+    :param promo_service: сервис взаимодействия с промокодами
+    :return: промокод
     """
+
     promo = await promo_service.get_by_name(promo_code)
     if not promo:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
@@ -44,8 +49,15 @@ async def get_price_by_promocode(
         promo_service: PromoCodeService = Depends(get_promo_service)
 ) -> PromoPriceApi:
     """
-    Возвращает информацию промокода по id
+    Возвращает цену фильма/подписки после применения промокода
+
+    :param promo_code: Промокод
+    :param user_id: id пользователя
+    :param price: цена фильма/подписки
+    :param promo_service: сервис взаимодействия с промокодами
+    :return: цена после применения промокода
     """
+
     price_after_promo = await promo_service.calc_price(user_id=user_id, promo_code=promo_code, price=price)
     if not price_after_promo[0]:
         raise HTTPException(status_code=HTTPStatus.BAD_REQUEST,
@@ -70,8 +82,14 @@ async def mark_promo_used_by_user(
         promo_service: PromoCodeService = Depends(get_promo_service)
 ):
     """
-    Возвращает информацию промокода по id
+    Отмечает промокод как использованный
+
+    :param body: тело запроса
+    :param promo_id: id промокода
+    :param promo_service: сервис взаимодействия с промокодами
+    :return: OK
     """
+
     promo = await promo_service.get_by_id(promo_id)
     if not promo:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
@@ -91,7 +109,12 @@ async def get_promo_by_id(
 ) -> PromoCode:
     """
     Возвращает информацию промокода по id
+
+    :param promo_id: id промокода
+    :param promo_service: сервис взаимодействия с промокодами
+    :return: промокод
     """
+
     promo = await promo_service.get_by_id(promo_id)
     if not promo:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,

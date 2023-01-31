@@ -1,24 +1,26 @@
 import uuid
 import datetime
 from http import HTTPStatus
-import pytz
 
 from aioredis import Redis
+from databases import Database
 from fastapi import Depends
 from httpx import AsyncClient
-from databases import Database
+import pytz
 
+from src.core.config import settings
+from src.core.error_messages import error_msgs
 from src.db.postgres import get_postgres
 from src.db.redis import get_redis_discounts, get_redis_users
 from src.db.request import get_request
+from src.models.discount import FilmDiscountResponseApi, FilmsDiscount, FilmDiscountModel, FilmsDiscountUsage
 from src.utils.discount_cache import AbstractDiscountCache, RedisDiscountCache
 from src.utils.user_cache import AbstractUserCache, RedisUserCache
-from src.models.discount import FilmDiscountResponseApi, FilmsDiscount, FilmDiscountModel, FilmsDiscountUsage
-from src.core.config import settings
-from src.core.error_messages import error_msgs
 
 
 class FilmDiscountService:
+    """Сервис взаимодействия со скидками к фильмам"""
+
     def __init__(
             self,
             postgres: Database,
@@ -33,10 +35,24 @@ class FilmDiscountService:
         self.utc = pytz.UTC
 
     async def get_by_id(self, discount_id: uuid.UUID) -> FilmsDiscount:
+        """
+        Получение скидки к фильму по id скидки
+
+        :param discount_id: id скидки
+        :return: скидка
+        """
+
         query = FilmsDiscount.select().filter(FilmsDiscount.c.id == discount_id)
         return await self.postgres.fetch_one(query=query)
 
     async def get_discount(self, tag: str) -> FilmsDiscount:
+        """
+        Получение скидки к фильму по тэгу
+
+        :param tag: тэг фильма
+        :return: скидка
+        """
+
         discount = await self.discount_cache.get(tag)
         if discount:
             discount = FilmDiscountModel(**discount)
@@ -53,6 +69,15 @@ class FilmDiscountService:
             return discount
 
     async def calc_price(self, tag: str, price: float, user_id: uuid.UUID) -> tuple[bool, FilmDiscountResponseApi]:
+        """
+        Вычисление цены фильма после применения скидок
+
+        :param tag: тэг фильма
+        :param price: цена фильма
+        :param user_id: id пользователя
+        :return: цена после применения скидка
+        """
+
         discount = await self.get_discount(tag=tag)
 
         discount_id, discount_value = None, 0
@@ -83,6 +108,13 @@ class FilmDiscountService:
         )
 
     async def mark_discount_as_used(self, discount_id: uuid.UUID, user_id: uuid.UUID):
+        """
+        Отметить скидку discount_id как использованную пользователем user_id
+
+        :param discount_id: id скидки
+        :param user_id: id пользователя
+        """
+
         query = FilmsDiscountUsage.insert().values(
             id=uuid.uuid4(),
             user_id=user_id,
@@ -99,7 +131,10 @@ def get_film_discount_service(
         request: AsyncClient = Depends(get_request)
 ) -> FilmDiscountService:
     """
+    Провайдер FilmDiscountService,
+    с помощью Depends он сообщает, что ему необходимы Database, Redis и AsyncClient
     """
+
     return FilmDiscountService(
         postgres,
         RedisDiscountCache(discount_cache),
