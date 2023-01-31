@@ -19,9 +19,6 @@ component "Сервис системы лояльности" as LoyaltyService #
     }
 }
 
-component "WebApp" as WebApp
-
-
 component "Сервисы онлайн-кинотеатра" as OtherServices {
     component "Сервис контента" as ContentService
     component "Сервис авторизации" as AuthService
@@ -29,28 +26,21 @@ component "Сервисы онлайн-кинотеатра" as OtherServices {
     component "Сервис биллинга" as BillingService
 }
 
-interface JWT_SECRET
-note left of JWT_SECRET
-    Сервисы используют общий JWT Secret
-    для генерации/проверки токена соответственно
-end note
 
-
-Admin -down-> AdminPanel: Управление скидками и промокодами
-User --> WebApp: Запрос на создание заказа
-WebApp --> ContentService: Запрос на получение контента
 ContentService <--> API
 API <--> PostgreSQL
 API <--> Redis
 Django <--> PostgreSQL
-API ..> NotificationService: Отправка уведомления
+API <--> AuthService
+ContentService <--> AuthService
+
+API ..> NotificationService: Запрос на отправку уведомления
 NotificationService ..> User: Отправка уведомления
 ContentService ..> BillingService: Информация для оплаты заказа
-BillingService ..> NotificationService: Отправка уведомления
+BillingService ..> NotificationService: Запрос на отправку уведомления
 BillingService <-down-> API
 
-LoyaltyService .up. JWT_SECRET
-AuthService .down. JWT_SECRET
-
-
+Admin -down-> AdminPanel: Управление скидками и промокодами
+User --> ContentService: Запрос на выдачу/покупку фильма
+User --> API: Запрос на выдачу/покупку подписки, использование пробной подписки
 @enduml
