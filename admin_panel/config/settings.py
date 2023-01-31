@@ -63,8 +63,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / "static"
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
