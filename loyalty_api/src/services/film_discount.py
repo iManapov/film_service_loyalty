@@ -1,6 +1,7 @@
 import uuid
 import datetime
 from http import HTTPStatus
+import pytz
 
 from aioredis import Redis
 from fastapi import Depends
@@ -12,7 +13,7 @@ from src.db.redis import get_redis_discounts, get_redis_users
 from src.db.request import get_request
 from src.utils.discount_cache import AbstractDiscountCache, RedisDiscountCache
 from src.utils.user_cache import AbstractUserCache, RedisUserCache
-from src.models.discount import FilmDiscountResponseApi, FilmsDiscount, FilmDiscountModel
+from src.models.discount import FilmDiscountResponseApi, FilmsDiscount, FilmDiscountModel, FilmsDiscountUsage
 from src.core.config import settings
 from src.core.error_messages import error_msgs
 
@@ -29,6 +30,11 @@ class FilmDiscountService:
         self.discount_cache = discount_cache
         self.user_cache = user_cache
         self.request = request
+        self.utc = pytz.UTC
+
+    async def get_by_id(self, discount_id: uuid.UUID) -> FilmsDiscount:
+        query = FilmsDiscount.select().filter(FilmsDiscount.c.id == discount_id)
+        return await self.postgres.fetch_one(query=query)
 
     async def get_discount(self, tag: str) -> FilmsDiscount:
         discount = await self.discount_cache.get(tag)
@@ -43,7 +49,7 @@ class FilmDiscountService:
             else:
                 await self.discount_cache.set(tag=tag, data={})
 
-        if discount and discount.enabled and discount.period_begin <= datetime.date.today() <= discount.period_end:
+        if discount and discount.enabled and discount.period_begin <= datetime.datetime.now(tz=self.utc) <= discount.period_end:
             return discount
 
     async def calc_price(self, tag: str, price: float, user_id: uuid.UUID) -> tuple[bool, FilmDiscountResponseApi]:
@@ -75,6 +81,15 @@ class FilmDiscountService:
             price_before=price,
             price_after=price_after
         )
+
+    async def mark_discount_as_used(self, discount_id: uuid.UUID, user_id: uuid.UUID):
+        query = FilmsDiscountUsage.insert().values(
+            id=uuid.uuid4(),
+            user_id=user_id,
+            discount_id=discount_id,
+            used_at=datetime.datetime.now(),
+        )
+        await self.postgres.execute(query)
 
 
 def get_film_discount_service(

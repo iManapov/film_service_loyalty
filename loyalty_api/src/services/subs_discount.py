@@ -7,7 +7,7 @@ from sqlalchemy import and_
 
 from src.core.error_messages import error_msgs
 from src.db.postgres import get_postgres
-from src.models.discount import SubsDiscount, SubsDiscountResponseApi
+from src.models.discount import SubsDiscount, SubsDiscountResponseApi, SubsDiscountUsage
 from src.services.subscription import SubscriptionService, get_subscription_service
 
 
@@ -49,6 +49,15 @@ class SubsDiscountService:
             discount_id=discount.id,
             subscription_id=subs_id
         )
+
+    async def mark_discount_as_used(self, discount_id: uuid.UUID, user_id: uuid.UUID):
+        query = SubsDiscountUsage.insert().values(
+            id=uuid.uuid4(),
+            user_id=user_id,
+            discount_id=discount_id,
+            used_at=datetime.datetime.now(),
+        )
+        await self.postgres.execute(query)
 
 
 def get_sub_discount_service(

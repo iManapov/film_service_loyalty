@@ -6,8 +6,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from src.services.promo_code import PromoCodeService, get_promo_service
 from src.core.params import params
 from src.core.error_messages import error_msgs
-from src.models.promo_code import PromoCode, BasePromoApi, PromoPriceApi, DelPromoBody
-from src.models.shared_response import MessageResponseModel
+from src.models.promo_code import PromoCode, BasePromoApi, PromoPriceApi
+from src.models.shared import MessageResponseModel, UserIdBody
 
 
 router = APIRouter()
@@ -65,7 +65,7 @@ async def get_price_by_promocode(
             description="Отметить промокод с promo_id как использованный для пользователя с user_id",
             )
 async def mark_promo_used_by_user(
-        body: DelPromoBody,
+        body: UserIdBody,
         promo_id: uuid.UUID = params.promo_id,
         promo_service: PromoCodeService = Depends(get_promo_service)
 ):

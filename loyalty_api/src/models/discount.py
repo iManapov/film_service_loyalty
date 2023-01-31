@@ -37,6 +37,36 @@ FilmsDiscount = sqlalchemy.Table(
         sqlalchemy.Column("updated_at", sqlalchemy.DateTime(timezone=True), onupdate=func.now())
 )
 
+SubsDiscountUsage = sqlalchemy.Table(
+    "discount_subscription_usage",
+    sqlalchemy.MetaData(),
+    sqlalchemy.Column("id", UUID(), default=uuid.uuid4(), nullable=False, unique=True, primary_key=True),
+    sqlalchemy.Column("discount_id", UUID(), nullable=False),
+    sqlalchemy.Column("user_id", UUID(), nullable=False),
+    sqlalchemy.Column("used_at", sqlalchemy.DateTime(timezone=True), nullable=False),
+)
+
+FilmsDiscountUsage = sqlalchemy.Table(
+    "discount_film_usage",
+    sqlalchemy.MetaData(),
+    sqlalchemy.Column("id", UUID(), default=uuid.uuid4(), nullable=False, unique=True, primary_key=True),
+    sqlalchemy.Column("discount_id", UUID(), nullable=False),
+    sqlalchemy.Column("user_id", UUID(), nullable=False),
+    sqlalchemy.Column("used_at", sqlalchemy.DateTime(timezone=True), nullable=False),
+)
+
+
+class SubsDiscountModel(JsonMixin):
+    id: uuid.UUID
+    subscription_id: uuid.UUID
+    value: float
+    title: Optional[str]
+    period_begin: datetime
+    period_end: datetime
+    enabled: bool
+    created_at: datetime
+    updated_at: datetime
+
 
 # Redis
 class FilmDiscountModel(JsonMixin):
@@ -48,7 +78,7 @@ class FilmDiscountModel(JsonMixin):
     period_end: datetime
     enabled: bool
     created_at: datetime
-    modified_at: datetime
+    updated_at: datetime
 
 
 class SubsDiscountResponseApi(JsonMixin):

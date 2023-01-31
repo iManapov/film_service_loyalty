@@ -30,8 +30,6 @@ PromoUsage = sqlalchemy.Table(
     sqlalchemy.Column("promo_id", UUID(), nullable=False),
     sqlalchemy.Column("user_id", UUID(), nullable=False),
     sqlalchemy.Column("used_at", sqlalchemy.DateTime(timezone=True), nullable=False),
-    sqlalchemy.Column("created_at", sqlalchemy.DateTime(timezone=True), server_default=func.now()),
-    sqlalchemy.Column("updated_at", sqlalchemy.DateTime(timezone=True), onupdate=func.now()),
 )
 
 
@@ -53,8 +51,4 @@ class PromoPriceApi(JsonMixin):
     price_before: float
     price_after: float
     promo_code: str
-    user_id: uuid.UUID
-
-
-class DelPromoBody(JsonMixin):
     user_id: uuid.UUID

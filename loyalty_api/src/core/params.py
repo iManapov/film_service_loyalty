@@ -31,7 +31,7 @@ class Params:
         title="UUID промокода"
     )
 
-    subs_id: Path = Path(
+    subs_id: Query = Query(
         default=Required,
         title="UUID подписки"
     )
@@ -39,6 +39,11 @@ class Params:
     film_tag: Query = Query(
         default=Required,
         title="Тэг фильма"
+    )
+
+    discount_id = Path = Path(
+        default=Required,
+        title="UUID скидки"
     )
 
 

@@ -40,7 +40,7 @@ class PromoCodeService:
             usage_query = PromoUsage.select().filter(and_(PromoUsage.c.promo_id == promo.id,
                                                           PromoUsage.c.user_id == user_id))
             usage = await self.postgres.fetch_one(usage_query)
-            if len(usage) > 0:
+            if usage and len(usage) > 0:
                 return False, error_msgs.promo_used
 
         if promo.measure == '%':
@@ -53,8 +53,6 @@ class PromoCodeService:
             user_id=user_id,
             promo_id=promo.id,
             used_at=datetime.datetime.now(),
-            created_at=datetime.datetime.now(),
-            updated_at=datetime.datetime.now(),
         )
         await self.postgres.execute(query)
 

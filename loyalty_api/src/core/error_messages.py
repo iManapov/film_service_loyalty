@@ -14,6 +14,7 @@ class ErrorMsg:
     promo_used: str = 'Promo already used'
     no_subs: str = 'Subscriptions not found'
     user_not_found: str = 'User not found'
+    discount_not_found: str = 'Discount not found'
 
 
 error_msgs = ErrorMsg()
