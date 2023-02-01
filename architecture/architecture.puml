@@ -1,0 +1,46 @@
+@startuml
+skinparam componentStyle uml2
+actor Пользователь as User
+actor Администратор as Admin
+
+
+component "Сервис системы лояльности" as LoyaltyService #Yellow {
+    component "AdminPanel" {
+        [Backend (Django)] as Django
+    }
+
+    component "API" as API
+
+    database "Redis" as Redis {
+        [Кэширование информации о покупках, скидках и промокодах] as PromocodeStorage
+    }
+    database "PostgreSQL" as PostgreSQL {
+        [Хранение информации о покупках, скидках и промокодах] as Orders
+    }
+}
+
+component "Сервисы онлайн-кинотеатра" as OtherServices {
+    component "Сервис контента" as ContentService
+    component "Сервис авторизации" as AuthService
+    component "Сервис нотификации" as NotificationService
+    component "Сервис биллинга" as BillingService
+}
+
+
+ContentService <--> API
+API <--> PostgreSQL
+API <--> Redis
+Django <--> PostgreSQL
+API <--> AuthService
+ContentService <--> AuthService
+
+API ..> NotificationService: Запрос на отправку уведомления
+NotificationService ..> User: Отправка уведомления
+ContentService ..> BillingService: Информация для оплаты заказа
+BillingService ..> NotificationService: Запрос на отправку уведомления
+BillingService <-down-> API
+
+Admin -down-> AdminPanel: Управление скидками и промокодами
+User --> ContentService: Запрос на выдачу/покупку фильма
+User --> API: Запрос на выдачу/покупку подписки, использование пробной подписки
+@enduml

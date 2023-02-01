@@ -1,0 +1,30 @@
+@startuml
+actor Пользователь as User
+participant "Сервис\nлояльности" as LoyaltyService
+participant "Сервис\nавторизации" as AuthService
+participant "Сервис\nбиллинга" as BillingService
+participant "Сервис\nнотификации" as NotificationService
+
+User -> LoyaltyService: Запрос информации с описанием подписки
+LoyaltyService -> LoyaltyService: Проверка наличия скидок на подписку
+LoyaltyService -> User: Выдача информации с описанием подписки
+
+User -> LoyaltyService: Запрос на покупку подписки
+LoyaltyService -> AuthService: Запрос на авторизацию (если не авторизован)
+AuthService --> LoyaltyService: Ответ на запрос авторизации
+
+
+
+LoyaltyService --> BillingService: Информация для оплаты подписки (в том числе скидка)
+BillingService -> LoyaltyService: Запрос наличия скидки на подписку и указанного пользователем промокода
+LoyaltyService --> BillingService: Ответ о наличии скидки на подписку и указанного пользователем промокода
+
+BillingService --> LoyaltyService: Информация об использовании скидки и/или промокода при успешном заказе
+note left: удаление промокода, если он одноразовый
+note left
+- запись факта использования промокода и/или скидки
+- удаление промокода, если он одноразовый
+end note
+BillingService -> NotificationService: Запрос на отправку оповещения пользователю
+NotificationService --> User: Отправка оповещения пользователю
+@enduml
