@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     postgres_host: str = Field('localhost', env='POSTGRES_HOST')
     postgres_port: int = Field(5432, env='POSTGRES_PORT')
     postgres_db: str = Field('loyalty_db', env='POSTGRES_DB')
+    postgres_schema: str = Field('loyalty', env='POSTGRES_SCHEMA')
     postgres_user: str = Field(..., env='POSTGRES_USER')
     postgres_pswd: str = Field(..., env='POSTGRES_PSWD')
 

@@ -4,13 +4,14 @@ import sqlalchemy
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 
+from src.core.config import settings
 from src.models.mixin import JsonMixin
 
 
 """Модель подписки в бд"""
 Subscription = sqlalchemy.Table(
     "subscription",
-    sqlalchemy.MetaData(),
+    sqlalchemy.MetaData(schema=settings.postgres_schema),
     sqlalchemy.Column("id", UUID(), primary_key=True, default=uuid.uuid4, unique=True, nullable=False),
     sqlalchemy.Column("name", sqlalchemy.String, unique=True, nullable=False),
     sqlalchemy.Column("price", sqlalchemy.Float, nullable=False),

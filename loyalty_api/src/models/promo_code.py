@@ -5,13 +5,14 @@ import sqlalchemy
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 
+from src.core.config import settings
 from src.models.mixin import JsonMixin
 
 
 """Модель промокода в бд"""
 PromoCode = sqlalchemy.Table(
     "promocode",
-    sqlalchemy.MetaData(),
+    sqlalchemy.MetaData(schema=settings.postgres_schema),
     sqlalchemy.Column("id", UUID(), primary_key=True, default=uuid.uuid4, unique=True, nullable=False),
     sqlalchemy.Column("user_id", UUID(), nullable=True),
     sqlalchemy.Column("value", sqlalchemy.Float, nullable=False),
@@ -27,7 +28,7 @@ PromoCode = sqlalchemy.Table(
 """Модель использования промокода в бд"""
 PromoUsage = sqlalchemy.Table(
     "promo_usage",
-    sqlalchemy.MetaData(),
+    sqlalchemy.MetaData(schema=settings.postgres_schema),
     sqlalchemy.Column("id", UUID(), default=uuid.uuid4(), nullable=False, unique=True, primary_key=True),
     sqlalchemy.Column("promo_id", UUID(), nullable=False),
     sqlalchemy.Column("user_id", UUID(), nullable=False),

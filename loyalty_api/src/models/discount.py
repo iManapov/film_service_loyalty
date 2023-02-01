@@ -5,13 +5,14 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from typing import Optional
 
+from src.core.config import settings
 from src.models.mixin import JsonMixin
 
 
 """Модель скидки к подписке в бд"""
 SubsDiscount = sqlalchemy.Table(
         "discount_subscription",
-        sqlalchemy.MetaData(),
+        sqlalchemy.MetaData(schema=settings.postgres_schema),
         sqlalchemy.Column("id", UUID(), primary_key=True, default=uuid.uuid4, unique=True, nullable=False),
         sqlalchemy.Column("subscription_id", UUID(), default=uuid.uuid4, unique=True, nullable=False),
         sqlalchemy.Column("value", sqlalchemy.Integer, nullable=False),
@@ -27,7 +28,7 @@ SubsDiscount = sqlalchemy.Table(
 """Модель скидки к фильму в бд"""
 FilmsDiscount = sqlalchemy.Table(
         "discount_film",
-        sqlalchemy.MetaData(),
+        sqlalchemy.MetaData(schema=settings.postgres_schema),
         sqlalchemy.Column("id", UUID(), primary_key=True, default=uuid.uuid4, unique=True, nullable=False),
         sqlalchemy.Column("tag", sqlalchemy.String, unique=True, nullable=False),
         sqlalchemy.Column("value", sqlalchemy.Integer, nullable=False),
@@ -43,7 +44,7 @@ FilmsDiscount = sqlalchemy.Table(
 """Модель использования скидок к подписке"""
 SubsDiscountUsage = sqlalchemy.Table(
     "discount_subscription_usage",
-    sqlalchemy.MetaData(),
+    sqlalchemy.MetaData(schema=settings.postgres_schema),
     sqlalchemy.Column("id", UUID(), default=uuid.uuid4(), nullable=False, unique=True, primary_key=True),
     sqlalchemy.Column("discount_id", UUID(), nullable=False),
     sqlalchemy.Column("user_id", UUID(), nullable=False),
@@ -54,7 +55,7 @@ SubsDiscountUsage = sqlalchemy.Table(
 """Модель использования скидок к фильму"""
 FilmsDiscountUsage = sqlalchemy.Table(
     "discount_film_usage",
-    sqlalchemy.MetaData(),
+    sqlalchemy.MetaData(schema=settings.postgres_schema),
     sqlalchemy.Column("id", UUID(), default=uuid.uuid4(), nullable=False, unique=True, primary_key=True),
     sqlalchemy.Column("discount_id", UUID(), nullable=False),
     sqlalchemy.Column("user_id", UUID(), nullable=False),
