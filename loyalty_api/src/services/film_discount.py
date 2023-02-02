@@ -10,6 +10,7 @@ import pytz
 
 from src.core.config import settings
 from src.core.error_messages import error_msgs
+from src.core.test_data import test_data
 from src.db.postgres import get_postgres
 from src.db.redis import get_redis_discounts, get_redis_users
 from src.db.request import get_request
@@ -84,15 +85,21 @@ class FilmDiscountService:
 
         user = await self.user_cache.get(str(user_id))
         if not user:
-            user = await self.request.get(f'{settings.auth_api_url}/user/{user_id}/subscriptions')
-            if not user.status_code == HTTPStatus.OK:
-                return False, error_msgs.user_not_found
-            user = user.json()
+            if settings.is_functional_testing:
+                user = test_data.user_subs.get(str(user_id))
+                if not user:
+                    return False, error_msgs.user_not_found
+                user['user_id'] = str(user_id)
+            else:
+                user = await self.request.get(f'{settings.auth_api_url}/user/{user_id}/subscriptions')
+                if user.status_code != HTTPStatus.OK:
+                    return False, error_msgs.user_not_found
+                user = user.json()['result']
             await self.user_cache.set(str(user_id), user)
 
         price_after = price - discount_value
         subs_discount = 0
-        if datetime.datetime.today() <= datetime.datetime.strptime(user['result']['subscription_until'], '%Y-%m-%d'):
+        if datetime.datetime.today() <= datetime.datetime.strptime(user['subscription_until'], '%Y-%m-%d'):
             subs_discount = float(settings.subscriber_discount)
             price_after = (price - discount_value) * (1 - subs_discount / 100)
 

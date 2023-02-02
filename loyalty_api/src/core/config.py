@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     user_cache_expire_in_seconds = 1 * 60  # 1 minute
     discount_cache_expire_in_seconds = 5 * 60  # 5 minutes
 
+    is_functional_testing: bool = Field(False, env='IS_FUNCTIONAL_TESTING')
+
     redis_host: str = Field('localhost', env="REDIS_HOST")
     redis_port: int = Field('6379', env="REDIS_PORT")
 
