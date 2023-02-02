@@ -14,8 +14,7 @@ from src.db.postgres import get_postgres
 from src.db.redis import get_redis_discounts, get_redis_users
 from src.db.request import get_request
 from src.models.discount import FilmDiscountResponseApi, FilmsDiscount, FilmDiscountModel, FilmsDiscountUsage
-from src.utils.discount_cache import AbstractDiscountCache, RedisDiscountCache
-from src.utils.user_cache import AbstractUserCache, RedisUserCache
+from src.utils.cache import AbstractCache, RedisCache
 
 
 class FilmDiscountService:
@@ -24,8 +23,8 @@ class FilmDiscountService:
     def __init__(
             self,
             postgres: Database,
-            discount_cache: AbstractDiscountCache,
-            user_cache: AbstractUserCache,
+            discount_cache: AbstractCache,
+            user_cache: AbstractCache,
             request: AsyncClient
     ):
         self.postgres = postgres
@@ -60,9 +59,9 @@ class FilmDiscountService:
             query = FilmsDiscount.select().filter(FilmsDiscount.c.tag == tag)
             discount = await self.postgres.fetch_one(query)
             if discount:
-                await self.discount_cache.set(tag=tag, data=discount.__dict__)
+                await self.discount_cache.set(key=tag, data=discount.__dict__)
             else:
-                await self.discount_cache.set(tag=tag, data={})
+                await self.discount_cache.set(key=tag, data={})
 
         if discount and discount.enabled and discount.period_begin <= datetime.datetime.now(tz=self.utc) <= discount.period_end:
             return discount
@@ -83,13 +82,13 @@ class FilmDiscountService:
         if discount:
             discount_id, discount_value = discount.id, discount.value
 
-        user = await self.user_cache.get(user_id)
+        user = await self.user_cache.get(str(user_id))
         if not user:
             user = await self.request.get(f'{settings.auth_api_url}/user/{user_id}/subscriptions')
             if not user.status_code == HTTPStatus.OK:
                 return False, error_msgs.user_not_found
             user = user.json()
-            await self.user_cache.set(user_id, user)
+            await self.user_cache.set(str(user_id), user)
 
         price_after = price - discount_value
         subs_discount = 0
@@ -136,7 +135,7 @@ def get_film_discount_service(
 
     return FilmDiscountService(
         postgres,
-        RedisDiscountCache(discount_cache),
-        RedisUserCache(user_cache),
+        RedisCache(redis=discount_cache, expiration_time=settings.discount_cache_expire_in_seconds),
+        RedisCache(redis=user_cache, expiration_time=settings.user_cache_expire_in_seconds),
         request
     )
