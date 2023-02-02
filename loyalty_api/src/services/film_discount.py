@@ -60,7 +60,6 @@ class FilmDiscountService:
             query = FilmsDiscount.select().filter(FilmsDiscount.c.tag == tag)
             discount = await self.postgres.fetch_one(query)
             if discount:
-                print(discount.__dict__)
                 await self.discount_cache.set(tag=tag, data=discount.__dict__)
             else:
                 await self.discount_cache.set(tag=tag, data={})

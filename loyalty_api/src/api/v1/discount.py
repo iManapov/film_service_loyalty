@@ -114,7 +114,6 @@ async def get_film_discount_by_film_tag(
     """
 
     result = await film_discount_service.calc_price(tag=tag, price=price, user_id=user_id)
-    print(result)
     if not result[0]:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
                             detail=result[1])

@@ -37,4 +37,4 @@ AUTH_API_URL - url от api авторизации (http://localhost:5001/api/v1
 docker compose up --build
 ```
 
-Адрес документации: http://localhost:80/api/openapi/
+Адрес документации: http://localhost/api/openapi/
