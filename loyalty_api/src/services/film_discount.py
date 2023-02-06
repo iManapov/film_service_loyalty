@@ -16,6 +16,7 @@ from src.db.redis import get_redis_discounts, get_redis_users
 from src.db.request import get_request
 from src.models.discount import FilmDiscountResponseApi, FilmsDiscount, FilmDiscountModel, FilmsDiscountUsage
 from src.utils.cache import AbstractCache, RedisCache
+from src.utils.row_to_dict import row_to_dict
 
 
 class FilmDiscountService:
@@ -60,7 +61,7 @@ class FilmDiscountService:
             query = FilmsDiscount.select().filter(FilmsDiscount.c.tag == tag)
             discount = await self.postgres.fetch_one(query)
             if discount:
-                await self.discount_cache.set(key=tag, data=discount.__dict__)
+                await self.discount_cache.set(key=tag, data=row_to_dict(discount))
             else:
                 await self.discount_cache.set(key=tag, data={})
 
