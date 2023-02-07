@@ -16,6 +16,7 @@ class ErrorMsg:
     user_not_found: str = 'User not found'
     discount_not_found: str = 'Discount not found'
     film_not_found: str = 'Film not found'
+    trial_subs_not_found: str = 'Trial subscription not found'
 
 
 error_msgs = ErrorMsg()

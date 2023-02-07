@@ -27,7 +27,6 @@ async def startup():
     # Подключаемся к базам при старте сервера
     redis.discounts = await aioredis.from_url(f"redis://{settings.redis_host}:{settings.redis_port}", db=3)
     redis.user_cache = await aioredis.from_url(f"redis://{settings.redis_host}:{settings.redis_port}", db=4)
-    redis.film_cache = await aioredis.from_url(f"redis://{settings.redis_host}:{settings.redis_port}", db=5)
 
     request.request = httpx.AsyncClient(verify=False)
 
@@ -41,7 +40,6 @@ async def shutdown():
     # Отключаемся от баз при выключении сервера
     await redis.discounts.close()
     await redis.user_cache.close()
-    await redis.film_cache.close()
     await postgres.postgres.disconnect()
 
 
