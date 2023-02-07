@@ -7,6 +7,7 @@ from databases import Database
 from fastapi import Depends
 from httpx import AsyncClient
 import pytz
+from sqlalchemy import and_
 
 from src.core.config import settings
 from src.core.error_messages import error_msgs
@@ -14,7 +15,7 @@ from src.core.test_data import test_data
 from src.db.postgres import get_postgres
 from src.db.redis import get_redis_discounts, get_redis_users
 from src.db.request import get_request
-from src.models.discount import FilmDiscountResponseApi, FilmsDiscount, FilmDiscountModel, FilmsDiscountUsage
+from src.models.discount import FilmDiscountResponse, FilmsDiscount, FilmDiscountModel, FilmsDiscountUsage
 from src.utils.cache import AbstractCache, RedisCache
 from src.utils.row_to_dict import row_to_dict
 
@@ -58,17 +59,23 @@ class FilmDiscountService:
         if discount:
             discount = FilmDiscountModel(**discount)
         else:
-            query = FilmsDiscount.select().filter(FilmsDiscount.c.tag == tag)
+            query = FilmsDiscount.select().filter(
+                and_(
+                    FilmsDiscount.c.tag == tag,
+                    FilmsDiscount.c.period_begin <= datetime.datetime.today(),
+                    FilmsDiscount.c.period_end >= datetime.datetime.today(),
+                    FilmsDiscount.c.enabled
+                )
+            )
             discount = await self.postgres.fetch_one(query)
             if discount:
                 await self.discount_cache.set(key=tag, data=row_to_dict(discount))
             else:
                 await self.discount_cache.set(key=tag, data={})
 
-        if discount and discount.enabled and discount.period_begin <= datetime.datetime.now(tz=self.utc) <= discount.period_end:
-            return discount
+        return discount
 
-    async def calc_price(self, tag: str, price: float, user_id: uuid.UUID) -> tuple[bool, FilmDiscountResponseApi]:
+    async def calc_price(self, tag: str, price: float, user_id: uuid.UUID) -> tuple[bool, FilmDiscountResponse]:
         """
         Вычисление цены фильма после применения скидок
 
@@ -104,9 +111,8 @@ class FilmDiscountService:
             subs_discount = float(settings.subscriber_discount)
             price_after = (price - discount_value) * (1 - subs_discount / 100)
 
-        return True, FilmDiscountResponseApi(
+        return True, FilmDiscountResponse(
             discount_id=discount_id,
-            tag=tag,
             user_id=user_id,
             subscriber_discount=subs_discount,
             price_before=price,

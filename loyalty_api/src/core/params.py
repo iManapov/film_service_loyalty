@@ -15,12 +15,6 @@ class Params:
         title="Id пользователя"
     )
 
-    price: Query = Query(
-        default=Required,
-        title="Цена фильма/подписки",
-        ge=0
-    )
-
     promo_code: Query = Query(
         default=Required,
         title="Код промокода"
@@ -36,14 +30,14 @@ class Params:
         title="UUID подписки"
     )
 
-    film_tag: Query = Query(
-        default=Required,
-        title="Тэг фильма"
-    )
-
-    discount_id = Path = Path(
+    discount_id: Path = Path(
         default=Required,
         title="UUID скидки"
+    )
+
+    film_id: Query = Query(
+        default=Required,
+        title='UUID фильма'
     )
 
 

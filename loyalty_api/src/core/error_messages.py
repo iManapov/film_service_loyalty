@@ -15,6 +15,7 @@ class ErrorMsg:
     no_subs: str = 'Subscriptions not found'
     user_not_found: str = 'User not found'
     discount_not_found: str = 'Discount not found'
+    film_not_found: str = 'Film not found'
 
 
 error_msgs = ErrorMsg()
