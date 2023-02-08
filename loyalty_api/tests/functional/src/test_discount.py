@@ -26,7 +26,7 @@ pytestmark = pytest.mark.asyncio
                 {'status': HTTPStatus.UNPROCESSABLE_ENTITY, 'error_msg': 'value_error.missing'}
         ),
         (
-                f'/api/v1/discounts/subs/{discount_sub_id}',
+                f'/api/v1/discounts/subscription/{discount_sub_id}',
                 {},
                 {'status': HTTPStatus.OK}
         )
@@ -48,17 +48,17 @@ async def test_discount_sub(make_get_request, query_data, expected_answer, url):
     'url, query_data, expected_answer',
     [
         (
-                f'/api/v1/discounts/subs/{discount_sub_id}',
+                f'/api/v1/discounts/subscription/{discount_sub_id}',
                 {"user_id": invalid_id},
                 {'status': HTTPStatus.OK}
         ),
         (
-                f'/api/v1/discounts/subs/{invalid_id}',
+                f'/api/v1/discounts/subscription/{invalid_id}',
                 {"user_id": invalid_id},
                 {'status': HTTPStatus.NOT_FOUND}  # Не найдем промокод
         ),
         (
-                f'/api/v1/discounts/subs/{discount_sub_id}',
+                f'/api/v1/discounts/subscription/{discount_sub_id}',
                 {},
                 {'status': HTTPStatus.UNPROCESSABLE_ENTITY, 'error_msg': 'value_error.missing'}
         ),
@@ -78,12 +78,12 @@ async def test_discount_sub_put(make_put_request, query_data, expected_answer, u
     'url, query_data, expected_answer',
     [
         (
-                f'/api/v1/discounts/films/{discount_id}',
+                f'/api/v1/discounts/film/{discount_id}',
                 {},
                 {'status': HTTPStatus.OK}
         ),
         (
-                f'/api/v1/discounts/films/{invalid_id}',
+                f'/api/v1/discounts/film/{invalid_id}',
                 {},
                 {'status': HTTPStatus.NOT_FOUND}
         ),
@@ -125,17 +125,17 @@ async def test_discount_film(make_get_request, check_cache_discount, check_cache
     'url, query_data, expected_answer',
     [
         (
-                f'/api/v1/discounts/films/{discount_id}',
+                f'/api/v1/discounts/film/{discount_id}',
                 {"user_id": invalid_id},
                 {'status': HTTPStatus.OK}
         ),
         (
-                f'/api/v1/discounts/films/{invalid_id}',
+                f'/api/v1/discounts/film/{invalid_id}',
                 {"user_id": invalid_id},
                 {'status': HTTPStatus.NOT_FOUND}  # Не найдем промокод
         ),
         (
-                f'/api/v1/discounts/films/{discount_id}',
+                f'/api/v1/discounts/film/{discount_id}',
                 {},
                 {'status': HTTPStatus.UNPROCESSABLE_ENTITY, 'error_msg': 'value_error.missing'}
         ),
