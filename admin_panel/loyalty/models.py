@@ -63,7 +63,7 @@ class DiscountSubscription(UUIDMixin, TimeStampedMixin):
 
 class DiscountFilm(UUIDMixin, TimeStampedMixin):
     title = models.CharField(_('title'), max_length=50)
-    tag = models.CharField(_('tag'), unique=True, max_length=50)
+    tag = models.CharField(_('tag'), max_length=50)
     value = models.IntegerField(_('value'), validators=[MinValueValidator(0),])
     enabled = models.BooleanField(_('enabled'), default=False)
     period_begin = models.DateTimeField(_('start_date'))
