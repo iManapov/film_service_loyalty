@@ -9,6 +9,9 @@
 - DB_SCHEME - имя схемы БД Postgres
 - POSTGRES_USER - пользователь БД Postgres
 - POSTGRES_PASSWORD - пароль БД Postgres
+- REDIS_HOST - хост БД Redis
+- REDIS_PORT - порт БД Redis
+- REDIS_DB - БД Redis
 - SECRET_KEY - секретный ключ Django
 - DEBUG - переключатель режима отладки
 

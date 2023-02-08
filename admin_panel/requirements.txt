@@ -3,4 +3,5 @@ django-split-settings==1.2.0
 flake8==6.0.0
 psycopg2-binary==2.9.5
 python-dotenv==0.21.1
+redis==4.4.2
 uwsgi==2.0.21

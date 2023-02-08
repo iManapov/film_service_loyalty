@@ -13,6 +13,7 @@ include(
     'components/internationalization.py',
     'components/logging.py',
     'components/validators.py',
+    'components/redis.py',
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
