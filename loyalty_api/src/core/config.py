@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     subscriber_discount: int = 20
     user_cache_expire_in_seconds = 1 * 60  # 1 minute
     discount_cache_expire_in_seconds = 5 * 60  # 5 minutes
+    film_cache_expire_in_seconds = 5 * 60  # 5 minutes
 
     is_functional_testing: bool = Field(False, env='IS_FUNCTIONAL_TESTING')
 
@@ -30,6 +31,7 @@ class Settings(BaseSettings):
     postgres_pswd: str = Field(..., env='POSTGRES_PSWD')
 
     auth_api_url: str = Field('http://localhost:5001/api/v1', env='AUTH_API_URL')
+    film_api_url: str = Field('http://localhost:8001/api/v1', env='FILM_API_URL')
 
     def get_postgres_url(self):
         return f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_pswd}@{self.postgres_host}:" \

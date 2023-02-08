@@ -51,10 +51,18 @@ class BasePromoApi(JsonMixin):
     updated_at: datetime.date
 
 
-class PromoPriceApi(JsonMixin):
+class PromoPrice(JsonMixin):
     """Модель ответа после применения промокода"""
 
     price_before: float
     price_after: float
     promo_code: str
     user_id: uuid.UUID
+
+
+class FilmPromoPriceApi(PromoPrice):
+    film_id: uuid.UUID
+
+
+class SubsPromoPriceApi(PromoPrice):
+    subscription_id: uuid.UUID
