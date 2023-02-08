@@ -1,0 +1,21 @@
+@startuml
+actor Пользователь as User
+participant "Сервис\nлояльности" as LoyaltyService
+participant "Сервис\nавторизации" as AuthService
+participant "Сервис\nнотификации" as NotificationService
+
+User -> LoyaltyService: Запрос информации с описанием пробной подписки
+LoyaltyService --> User: Выдача информации с описанием подписки
+
+User -> LoyaltyService: Запрос на приобретение пробной подписки
+LoyaltyService -> AuthService: Запрос на авторизацию (если не авторизован)
+AuthService --> LoyaltyService: Ответ на запрос авторизации
+LoyaltyService -> AuthService: Запрос возможности использования пользователем бесплатной подписки
+AuthService --> LoyaltyService: Ответ о возможности использования пользователем бесплатной подписки
+
+LoyaltyService -> AuthService: Запись информации об использовании пробной подписки пользователем
+AuthService --> LoyaltyService: Ответ об успешной записи об использовании пробной подписки
+
+LoyaltyService -> NotificationService: Запрос на отправку оповещения пользователю
+NotificationService --> User: Отправка оповещения пользователю
+@enduml
