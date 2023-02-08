@@ -115,4 +115,4 @@ class FilmDiscountResponseApi(FilmDiscountResponse):
     """Модель ответа после применения скидки к фильму"""
 
     film_id: uuid.UUID
-    tag: str
+    tag: Optional[str]

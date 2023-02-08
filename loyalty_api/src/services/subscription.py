@@ -62,6 +62,13 @@ class SubscriptionService:
         return await self.postgres.fetch_one(query)
 
     async def mark_trial_subscription_as_used(self, user_id: uuid.UUID) -> tuple[bool, Optional[str]]:
+        """
+        Отметить пробную подписку как использованную пользователем user_id
+
+        :param user_id: id пользователя
+        :return: (True,) если успешно, иначе (False, описание ошибки)
+        """
+
         subs = await self.get_trial_subscription()
         if not subs:
             return False, error_msgs.trial_subs_not_found

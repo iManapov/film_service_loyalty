@@ -33,12 +33,13 @@ class FilmService:
             film = test_data.films.get(film_id)
             if not film:
                 return False, error_msgs.film_not_found
-            film['uuid'] = film_id
+            film['id'] = film_id
         else:
             film = await self.request.get(f'{settings.film_api_url}/films/{film_id}')
             if film.status_code != HTTPStatus.OK:
                 return False, film.json()
             film = film.json()
+            film['id'] = film.pop('uuid')
 
         return True, Film(**film)
 

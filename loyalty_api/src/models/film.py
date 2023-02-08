@@ -5,7 +5,7 @@ from src.models.mixin import JsonMixin
 
 
 class Film(JsonMixin):
-    uuid: uuid.UUID
+    id: uuid.UUID
     title: str
     imdb_rating: Optional[float]
     price: float
