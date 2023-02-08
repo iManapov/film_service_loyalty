@@ -40,7 +40,7 @@ async def get_subscriptions_discount_by_subscription_id(
     return new_price[1]
 
 
-@router.get('/subs/{discount_id}',
+@router.get('/subscription/{discount_id}',
             response_model=SubsDiscountModel,
             summary="Получение информации о скидки для подписки по id",
             description="Получение информации о скидки для подписки по id",
@@ -65,7 +65,7 @@ async def get_subscription_discount_by_discount_id(
     return discount
 
 
-@router.put('/subs/{discount_id}',
+@router.put('/subscription/{discount_id}',
             response_model=MessageResponseModel,
             summary="Отметить скидку для подписки как примененную",
             description="Отметить скидки для подписки как примененную",
@@ -119,7 +119,7 @@ async def get_film_discount_by_film_id(
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
                             detail=film[1])
     film = film[1]
-    result = await film_discount_service.calc_price(tag=film.tag, price=film.price, user_id=user_id)
+    result = await film_discount_service.calc_price(film=film, user_id=user_id)
     if not result[0]:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
                             detail=result[1])
@@ -127,7 +127,7 @@ async def get_film_discount_by_film_id(
     return FilmDiscountResponseApi(**{**result[1].dict(), 'tag': film.tag, 'film_id': film_id})
 
 
-@router.get('/films/{discount_id}',
+@router.get('/film/{discount_id}',
             response_model=FilmDiscountModel,
             summary="Получение информации о скидки для фильма по id",
             description="Получение информации о скидки для фильма по id",
@@ -152,7 +152,7 @@ async def get_film_discount_by_discount_id(
     return discount
 
 
-@router.put('/films/{discount_id}',
+@router.put('/film/{discount_id}',
             response_model=MessageResponseModel,
             summary="Отметить скидку для фильма как примененную",
             description="Отметить скидку для фильма как примененную",
