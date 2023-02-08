@@ -7,7 +7,7 @@ services:
     expose:
       - "8010"
     volumes:
-      - static_volume:/staticfiles
+      - static_volume:/opt/app/staticfiles
     depends_on:
       postgres:
         condition: service_healthy

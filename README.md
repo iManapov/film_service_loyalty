@@ -13,4 +13,4 @@
 docker compose up --build
 ```
 
-Адрес документации: http://localhost:80/api/openapi/
+Адрес документации: http://localhost/api/openapi/

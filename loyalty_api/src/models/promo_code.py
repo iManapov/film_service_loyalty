@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 import uuid
 
 import sqlalchemy
@@ -40,7 +41,7 @@ class BasePromoApi(JsonMixin):
     """Модель промокода"""
 
     id: uuid.UUID
-    user_id: uuid.UUID
+    user_id: Optional[uuid.UUID]
     code: str
     measure: str
     value: float
