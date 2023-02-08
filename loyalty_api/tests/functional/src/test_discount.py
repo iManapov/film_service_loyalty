@@ -1,9 +1,7 @@
-import random
 from http import HTTPStatus
 import pytest
 
-from core.test_data import test_data
-from functional.testdata.discount_data import discount_value, discount_sub_id, discount_film_id, discount_film_tag
+from functional.testdata.discount_data import discount_value, discount_sub_id, discount_id, film_id, invalid_id, user_id
 from tests.functional.testdata.subscription_data import sub_id
 
 pytestmark = pytest.mark.asyncio
@@ -13,17 +11,17 @@ pytestmark = pytest.mark.asyncio
     'url, query_data, expected_answer',
     [
         (
-                '/api/v1/discounts/subs',
+                '/api/v1/discounts/subscription/price',
                 {"subs_id": sub_id},
                 {'status': HTTPStatus.OK}
         ),
         (
-                '/api/v1/discounts/subs',
-                {"subs_id": '3fa85f64-5717-4562-b3fc-2c963f66afa6'},
+                '/api/v1/discounts/subscription/price',
+                {"subs_id": invalid_id},
                 {'status': HTTPStatus.NOT_FOUND}
         ),
         (
-                '/api/v1/discounts/subs',
+                '/api/v1/discounts/subscription/price',
                 {},
                 {'status': HTTPStatus.UNPROCESSABLE_ENTITY, 'error_msg': 'value_error.missing'}
         ),
@@ -51,12 +49,12 @@ async def test_discount_sub(make_get_request, query_data, expected_answer, url):
     [
         (
                 f'/api/v1/discounts/subs/{discount_sub_id}',
-                {"user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"},
+                {"user_id": invalid_id},
                 {'status': HTTPStatus.OK}
         ),
         (
-                f'/api/v1/discounts/subs/3fa85f64-5717-4562-b3fc-2c963f66afa6',
-                {"user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"},
+                f'/api/v1/discounts/subs/{invalid_id}',
+                {"user_id": invalid_id},
                 {'status': HTTPStatus.NOT_FOUND}  # Не найдем промокод
         ),
         (
@@ -80,30 +78,28 @@ async def test_discount_sub_put(make_put_request, query_data, expected_answer, u
     'url, query_data, expected_answer',
     [
         (
-                f'/api/v1/discounts/films/{discount_film_id}',
+                f'/api/v1/discounts/films/{discount_id}',
                 {},
                 {'status': HTTPStatus.OK}
         ),
         (
-                '/api/v1/discounts/films/3fa85f64-5717-4562-b3fc-2c963f66afa6',
+                f'/api/v1/discounts/films/{invalid_id}',
                 {},
                 {'status': HTTPStatus.NOT_FOUND}
         ),
         (
-                '/api/v1/discounts/films',
-                {"tag": discount_film_tag, 'user_id': list(test_data.user_subs.keys())[random.randint(0, 2)],
-                 'price': 1000},
+                '/api/v1/discounts/film/price',
+                {"film_id": film_id, 'user_id': user_id},
                 {'status': HTTPStatus.OK}
         ),
         (
-                '/api/v1/discounts/films',
-                {"tag": discount_film_tag, 'user_id': list(test_data.user_subs.keys())[random.randint(0, 2)]},
+                '/api/v1/discounts/film/price',
+                {'user_id': user_id},
                 {'status': HTTPStatus.UNPROCESSABLE_ENTITY, 'error_msg': 'value_error.missing'}
         ),
         (
-                '/api/v1/discounts/films/',
-                {"tag": discount_film_tag, 'user_id': '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-                 'price': 1000},
+                '/api/v1/discounts/film/price',
+                {"film_id": film_id, 'user_id': invalid_id},
                 {'status': HTTPStatus.NOT_FOUND}
         ),
     ]
@@ -119,7 +115,7 @@ async def test_discount_film(make_get_request, check_cache_discount, check_cache
     if status == HTTPStatus.UNPROCESSABLE_ENTITY:
         assert body['detail'][0]['type'] == expected_answer['error_msg']
     elif status == HTTPStatus.OK and url == '/api/v1/discounts/films':
-        cache_response_discount = await check_cache_discount(discount_film_tag)
+        cache_response_discount = await check_cache_discount(film_id)
         assert cache_response_discount['id'] == body['discount_id']
         cache_response_user = await check_cache_user(query_data['user_id'])
         assert cache_response_user['user_id'] == body['user_id']
@@ -129,17 +125,17 @@ async def test_discount_film(make_get_request, check_cache_discount, check_cache
     'url, query_data, expected_answer',
     [
         (
-                f'/api/v1/discounts/films/{discount_film_id}',
-                {"user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"},
+                f'/api/v1/discounts/films/{discount_id}',
+                {"user_id": invalid_id},
                 {'status': HTTPStatus.OK}
         ),
         (
-                f'/api/v1/discounts/films/3fa85f64-5717-4562-b3fc-2c963f66afa6',
-                {"user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"},
+                f'/api/v1/discounts/films/{invalid_id}',
+                {"user_id": invalid_id},
                 {'status': HTTPStatus.NOT_FOUND}  # Не найдем промокод
         ),
         (
-                f'/api/v1/discounts/films/{discount_film_id}',
+                f'/api/v1/discounts/films/{discount_id}',
                 {},
                 {'status': HTTPStatus.UNPROCESSABLE_ENTITY, 'error_msg': 'value_error.missing'}
         ),

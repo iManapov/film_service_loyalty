@@ -1,12 +1,16 @@
 import datetime
+import random
 import uuid
 
+from core.test_data import test_data
 from functional.testdata.subscription_data import sub_id
 
 discount_sub_id = 'aadfcfb6-7e2e-46da-a151-f0e399b63d20'
-discount_film_id = 'aadfcfb6-7e2e-46da-a151-f0e399b63d21'
+discount_id = 'aadfcfb6-7e2e-46da-a151-f0e399b63d21'
 discount_value = 300
-discount_film_tag = 'fantastic'
+film_id = list(test_data.films.keys())[0]
+invalid_id = '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+user_id = list(test_data.user_subs.keys())[random.randint(0, 2)]
 
 pg_discount_sub_data = [
     {
@@ -46,13 +50,13 @@ pg_discount_film_data = [
         "enabled": True,
         "period_begin": datetime.datetime.today(),
         "period_end": datetime.datetime.today() + datetime.timedelta(days=10),
-        "tag": discount_film_tag,
+        "tag": film_id,
     }
     for _ in range(1)
 ]
 pg_discount_film_data.append(
     {
-        "id": discount_film_id,
+        "id": discount_id,
         "title": 'Скидка №2',
         "created_at": datetime.datetime.now(),
         "updated_at": datetime.datetime.now(),
@@ -60,6 +64,6 @@ pg_discount_film_data.append(
         "enabled": True,
         "period_begin": datetime.datetime.today(),
         "period_end": datetime.datetime.today() + datetime.timedelta(days=10),
-        "tag": discount_film_tag,
+        "tag": film_id,
     }
 )

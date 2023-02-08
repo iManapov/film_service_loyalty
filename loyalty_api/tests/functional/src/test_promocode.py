@@ -1,7 +1,7 @@
 from http import HTTPStatus
 import pytest
 
-from tests.functional.testdata.promo_data import promo_id
+from tests.functional.testdata.promo_data import promo_id, promo_code, user_id, film_id, film_price
 
 pytestmark = pytest.mark.asyncio
 
@@ -11,7 +11,7 @@ pytestmark = pytest.mark.asyncio
     [
         (
                 '/api/v1/promocodes/search',
-                {"promo_code": "J892KZ37"},
+                {"promo_code": promo_code},
                 {'status': HTTPStatus.OK}
         ),
         (
@@ -38,16 +38,16 @@ async def test_promocode(make_get_request, query_data, expected_answer, url):
 
 async def test_promocode_price(make_get_request):
     # 1. Запрашиваем данные из API
-    body, status = await make_get_request('/api/v1/promocodes/search', {"promo_code": "J892KZ37"})
+    body, status = await make_get_request('/api/v1/promocodes/search', {"promo_code": promo_code})
     assert status == HTTPStatus.OK
     promo_value = body['value']
 
     # 2. Проверяем данные
-    body, status = await make_get_request(f'/api/v1/promocodes/price', {"promo_code": "J892KZ37", "price": 550,
-                                                                        "user_id": '3fa85f64-5717-4562-b3fc-'
-                                                                                   '2c963f66afa6'})
+    body, status = await make_get_request(f'/api/v1/promocodes/film/price', {"promo_code": promo_code,
+                                                                             "user_id": user_id,
+                                                                             "film_id": film_id})
     assert status == HTTPStatus.OK
-    assert body['price_after'] == 550 * (1 - promo_value / 100)
+    assert body['price_after'] == film_price * (1 - promo_value / 100)
 
 
 @pytest.mark.parametrize(
@@ -55,12 +55,12 @@ async def test_promocode_price(make_get_request):
     [
         (
                 f'/api/v1/promocodes/{promo_id}',
-                {"user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"},
+                {"user_id": user_id},
                 {'status': HTTPStatus.OK}
         ),
         (
-                f'/api/v1/promocodes/3fa85f64-5717-4562-b3fc-2c963f66afa6',
-                {"user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"},
+                f'/api/v1/promocodes/{user_id}',
+                {"user_id": user_id},
                 {'status': HTTPStatus.NOT_FOUND}  # Не найдем промокод
         ),
         (
