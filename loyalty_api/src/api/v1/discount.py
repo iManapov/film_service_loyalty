@@ -8,6 +8,7 @@ from src.core.params import params
 from src.models.discount import SubsDiscountResponseApi, FilmDiscountResponseApi, \
     FilmDiscountModel, SubsDiscountModel
 from src.models.shared import MessageResponseModel, UserIdBody
+from src.services.film import FilmService, get_film_service
 from src.services.film_discount import FilmDiscountService, get_film_discount_service
 from src.services.subs_discount import SubsDiscountService, get_sub_discount_service
 
@@ -15,7 +16,7 @@ from src.services.subs_discount import SubsDiscountService, get_sub_discount_ser
 router = APIRouter()
 
 
-@router.get('/subs',
+@router.get('/subscription/price',
             response_model=SubsDiscountResponseApi,
             summary="Получение цены подписки после применения скидки",
             description="Получение цены подписки после применения скидки",
@@ -39,7 +40,7 @@ async def get_subscriptions_discount_by_subscription_id(
     return new_price[1]
 
 
-@router.get('/subs/{discount_id}',
+@router.get('/subscription/{discount_id}',
             response_model=SubsDiscountModel,
             summary="Получение информации о скидки для подписки по id",
             description="Получение информации о скидки для подписки по id",
@@ -64,7 +65,7 @@ async def get_subscription_discount_by_discount_id(
     return discount
 
 
-@router.put('/subs/{discount_id}',
+@router.put('/subscription/{discount_id}',
             response_model=MessageResponseModel,
             summary="Отметить скидку для подписки как примененную",
             description="Отметить скидки для подписки как примененную",
@@ -92,35 +93,41 @@ async def mark_subs_discount_as_used(
     return MessageResponseModel(msg='OK')
 
 
-@router.get('/films',
+@router.get('/film/price',
             response_model=FilmDiscountResponseApi,
             summary="Получение цены фильма после применения скидок",
             description="Получение цены фильма после применения скидок",
             )
-async def get_film_discount_by_film_tag(
-        tag: str = params.film_tag,
+async def get_film_discount_by_film_id(
+        film_id: uuid.UUID = params.film_id,
         user_id: uuid.UUID = params.user_id,
-        price: float = params.price,
-        film_discount_service: FilmDiscountService = Depends(get_film_discount_service)
+        film_discount_service: FilmDiscountService = Depends(get_film_discount_service),
+        film_service: FilmService = Depends(get_film_service),
 ) -> FilmDiscountResponseApi:
     """
-    Получение скидки к фильму по тэгу.
+    Получение скидки к фильму по id фильма.
 
-    :param tag: тэг
+    :param film_id: id фильма
     :param user_id: id пользователя
-    :param price: цена фильма
     :param film_discount_service: сервис взаимодействия со скидками к фильмам
+    :param film_service: сервис взаимодействия с фильмами
     :return: Цена со скидкой
     """
 
-    result = await film_discount_service.calc_price(tag=tag, price=price, user_id=user_id)
+    film = await film_service.get_by_id(film_id)
+    if not film[0]:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail=film[1])
+    film = film[1]
+    result = await film_discount_service.calc_price(film=film, user_id=user_id)
     if not result[0]:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
                             detail=result[1])
-    return result[1]
+
+    return FilmDiscountResponseApi(**{**result[1].dict(), 'tag': film.tag, 'film_id': film_id})
 
 
-@router.get('/films/{discount_id}',
+@router.get('/film/{discount_id}',
             response_model=FilmDiscountModel,
             summary="Получение информации о скидки для фильма по id",
             description="Получение информации о скидки для фильма по id",
@@ -145,7 +152,7 @@ async def get_film_discount_by_discount_id(
     return discount
 
 
-@router.put('/films/{discount_id}',
+@router.put('/film/{discount_id}',
             response_model=MessageResponseModel,
             summary="Отметить скидку для фильма как примененную",
             description="Отметить скидку для фильма как примененную",

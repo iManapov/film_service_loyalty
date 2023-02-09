@@ -1,5 +1,7 @@
 import uuid
 from datetime import datetime
+from typing import Optional
+
 import sqlalchemy
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
@@ -28,7 +30,7 @@ class SubscriptionApi(JsonMixin):
     id: uuid.UUID
     name: str
     price: float
-    description: str
+    description: Optional[str]
     months: int
     created_at: datetime
     updated_at: datetime

@@ -17,7 +17,7 @@ SubsDiscount = sqlalchemy.Table(
         sqlalchemy.Column("subscription_id", UUID(), default=uuid.uuid4, unique=True, nullable=False),
         sqlalchemy.Column("value", sqlalchemy.Integer, nullable=False),
         sqlalchemy.Column("period_begin", sqlalchemy.Date(), server_default=func.now()),
-        sqlalchemy.Column("period_end", sqlalchemy.Date(), default='2050-01-01', nullable=False),
+        sqlalchemy.Column("period_end", sqlalchemy.Date(), nullable=False),
         sqlalchemy.Column("title", sqlalchemy.String, nullable=False),
         sqlalchemy.Column("enabled", sqlalchemy.Boolean, default=True, nullable=False),
         sqlalchemy.Column("created_at", sqlalchemy.DateTime(timezone=True), server_default=func.now()),
@@ -33,7 +33,7 @@ FilmsDiscount = sqlalchemy.Table(
         sqlalchemy.Column("tag", sqlalchemy.String, unique=True, nullable=False),
         sqlalchemy.Column("value", sqlalchemy.Integer, nullable=False),
         sqlalchemy.Column("period_begin", sqlalchemy.Date(), server_default=func.now()),
-        sqlalchemy.Column("period_end", sqlalchemy.Date(), default='2050-01-01', nullable=False),
+        sqlalchemy.Column("period_end", sqlalchemy.Date(), nullable=False),
         sqlalchemy.Column("title", sqlalchemy.String, nullable=False),
         sqlalchemy.Column("enabled", sqlalchemy.Boolean, default=True, nullable=False),
         sqlalchemy.Column("created_at", sqlalchemy.DateTime(timezone=True), server_default=func.now()),
@@ -101,12 +101,18 @@ class SubsDiscountResponseApi(JsonMixin):
     price_after: float
 
 
-class FilmDiscountResponseApi(JsonMixin):
-    """Модель ответа после применения скидки к фильму"""
+class FilmDiscountResponse(JsonMixin):
+    """Модель после применения скидки к фильму"""
 
     discount_id: Optional[uuid.UUID]
-    tag: str
     user_id: uuid.UUID
     subscriber_discount: int
     price_before: float
     price_after: float
+
+
+class FilmDiscountResponseApi(FilmDiscountResponse):
+    """Модель ответа после применения скидки к фильму"""
+
+    film_id: uuid.UUID
+    tag: Optional[str]
