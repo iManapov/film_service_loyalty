@@ -25,8 +25,8 @@ app = FastAPI(
 @app.on_event('startup')
 async def startup():
     # Подключаемся к базам при старте сервера
-    redis.discounts = await aioredis.from_url(f"redis://{settings.redis_host}:{settings.redis_port}", db=3)
-    redis.user_cache = await aioredis.from_url(f"redis://{settings.redis_host}:{settings.redis_port}", db=4)
+    redis.discounts = await aioredis.from_url(f"redis://{settings.redis_host}:{settings.redis_port}", db=1)
+    redis.user_cache = await aioredis.from_url(f"redis://{settings.redis_host}:{settings.redis_port}", db=2)
 
     request.request = httpx.AsyncClient(verify=False)
 
