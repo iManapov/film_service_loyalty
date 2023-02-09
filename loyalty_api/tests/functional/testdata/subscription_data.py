@@ -1,6 +1,5 @@
 import datetime
 import uuid
-import random
 
 sub_id = 'aadfcfb6-7e2e-46da-a151-f0e399b63d20'
 

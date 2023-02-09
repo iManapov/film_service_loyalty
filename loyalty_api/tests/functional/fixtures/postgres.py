@@ -4,7 +4,7 @@ import pytest
 from databases import Database
 
 from functional.testdata.discount_data import pg_discount_sub_data, pg_discount_film_data
-from models.discount import SubsDiscount, FilmsDiscount
+from src.models.discount import SubsDiscount, FilmsDiscount
 from src.models.promo_code import PromoCode
 from src.models.subscription import Subscription
 from tests.functional.testdata.promo_data import pg_promo_data

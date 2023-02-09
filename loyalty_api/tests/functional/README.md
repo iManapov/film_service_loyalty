@@ -11,5 +11,5 @@
 - POSTGRES_DB - база данных Postgres
 - AUTH_API_URL - адрес сервиса авторизации
 
-
+Для запуска тестов используется команда `pytest ./tests/functional/src` из папки `loyalty_api`
 

@@ -2,8 +2,8 @@ import datetime
 import random
 import uuid
 
-from core.test_data import test_data
-from functional.testdata.subscription_data import sub_id
+from src.core.test_data import test_data
+from tests.functional.testdata.subscription_data import sub_id
 
 discount_sub_id = 'aadfcfb6-7e2e-46da-a151-f0e399b63d20'
 discount_id = 'aadfcfb6-7e2e-46da-a151-f0e399b63d21'

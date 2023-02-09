@@ -1,7 +1,7 @@
 from http import HTTPStatus
 import pytest
 
-from functional.testdata.discount_data import discount_value, discount_sub_id, discount_id, film_id, invalid_id, user_id
+from tests.functional.testdata.discount_data import discount_value, discount_sub_id, discount_id, film_id, invalid_id, user_id
 from tests.functional.testdata.subscription_data import sub_id
 
 pytestmark = pytest.mark.asyncio
@@ -38,7 +38,7 @@ async def test_discount_sub(make_get_request, query_data, expected_answer, url):
 
     # 2. Проверяем ответ
     assert status == expected_answer['status']
-    if hasattr(body, 'price_before'):
+    if 'price_before' in body:
         assert body['price_before'] - body['price_after'] == discount_value
     if status == HTTPStatus.UNPROCESSABLE_ENTITY:
         assert body['detail'][0]['type'] == expected_answer['error_msg']
@@ -110,7 +110,7 @@ async def test_discount_film(make_get_request, check_cache_discount, check_cache
 
     # 2. Проверяем ответ
     assert status == expected_answer['status']
-    if hasattr(body, 'price_before'):
+    if 'price_before' in body:
         assert (body['price_before'] - discount_value) * (1 - body['subscriber_discount'] / 100) == body['price_after']
     if status == HTTPStatus.UNPROCESSABLE_ENTITY:
         assert body['detail'][0]['type'] == expected_answer['error_msg']

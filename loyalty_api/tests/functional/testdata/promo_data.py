@@ -2,7 +2,7 @@ import datetime
 import uuid
 import random
 
-from core.test_data import test_data
+from src.core.test_data import test_data
 
 promo_id = 'aadfcfb6-7e2e-46da-a151-f0e399b63d20'
 promo_code = 'J892KZ37'
