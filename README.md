@@ -1,4 +1,6 @@
 # Сервис системы лояльности
+Ссылка на репозиторий:
+https://github.com/san100791/graduate_work
 
 
 ## Запуск в Docker
