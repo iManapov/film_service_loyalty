@@ -9,13 +9,14 @@ participant "Сервис\nнотификации" as NotificationService
 User -> ContentService: Запрос на выдачу фильма
 ContentService -> AuthService: Запрос на авторизацию
 AuthService --> ContentService: Ответ на запрос авторизации
-ContentService -> User: Выдача фильма и информации о нем с учетом скидок
-
-User -> ContentService: Запрос на покупку фильма
 ContentService -> LoyaltyService: Запрос информации о скидке на фильм
 LoyaltyService -> AuthService: Запрос информации о наличии подписки у пользователя
 AuthService --> LoyaltyService: Информация о наличии подписки у пользователя
 LoyaltyService --> ContentService: Информация о скидке на фильм
+ContentService -> User: Выдача фильма и информации о нем с учетом скидок
+
+User -> ContentService: Запрос на покупку фильма
+
 
 ContentService --> BillingService: Информация для оплаты фильма (в том числе скидка)
 BillingService -> LoyaltyService: Запрос наличия скидки на фильм и указанного пользователем промокода
