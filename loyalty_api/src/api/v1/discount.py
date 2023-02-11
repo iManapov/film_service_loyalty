@@ -11,6 +11,7 @@ from src.models.shared import MessageResponseModel, UserIdBody
 from src.services.film import FilmService, get_film_service
 from src.services.film_discount import FilmDiscountService, get_film_discount_service
 from src.services.subs_discount import SubsDiscountService, get_sub_discount_service
+from src.services.subscription import SubscriptionService, get_subscription_service
 
 
 router = APIRouter()
@@ -23,21 +24,41 @@ router = APIRouter()
             )
 async def get_subscriptions_discount_by_subscription_id(
         subs_id: uuid.UUID = params.subs_id,
+        subs_service: SubscriptionService = Depends(get_subscription_service),
         subs_discount_service: SubsDiscountService = Depends(get_sub_discount_service)
 ) -> SubsDiscountResponseApi:
     """
     Возвращает скидку на подписку по ее id.
 
     :param subs_id: id подписки
+    :param subs_service: сервис взаимодействия с подписками
     :param subs_discount_service: сервис взаимодействия со скидками к подпискам
     :return: Цена со скидкой
     """
 
-    new_price = await subs_discount_service.calc_price(subs_id=subs_id)
-    if not new_price[0]:
+    subs = await subs_service.get_subscription_by_id(subs_id)
+    if not subs:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
-                            detail=new_price[1])
-    return new_price[1]
+                            detail=error_msgs.no_subs)
+
+    discount = await subs_discount_service.get_discount_for_sub(subs_id=subs.id)
+
+    if not discount:
+        return SubsDiscountResponseApi(
+            price_before=subs.price,
+            price_after=subs.price,
+            discount_id=None,
+            subscription_id=subs.id
+        )
+
+    new_price = await subs_discount_service.calc_price(subscription=subs, discount=discount)
+
+    return SubsDiscountResponseApi(
+        price_before=subs.price,
+        price_after=new_price,
+        discount_id=discount.id,
+        subscription_id=subs.id
+    )
 
 
 @router.get('/subscription/{discount_id}',

@@ -5,18 +5,16 @@ from databases import Database
 from fastapi import Depends
 from sqlalchemy import and_
 
-from src.core.error_messages import error_msgs
 from src.db.postgres import get_postgres
 from src.models.discount import SubsDiscount, SubsDiscountResponseApi, SubsDiscountUsage
-from src.services.subscription import SubscriptionService, get_subscription_service
+from src.models.subscription import Subscription
 
 
 class SubsDiscountService:
     """Сервис взаимодействия со скидкой к подписке"""
 
-    def __init__(self, postgres: Database, subs_service: SubscriptionService):
+    def __init__(self, postgres: Database):
         self.postgres = postgres
-        self.subs = subs_service
 
     async def get_discount_by_id(self, discount_id: uuid.UUID) -> SubsDiscount:
         """
@@ -46,32 +44,16 @@ class SubsDiscountService:
         )
         return await self.postgres.fetch_one(query=query)
 
-    async def calc_price(self, subs_id: uuid.UUID) -> tuple[bool, SubsDiscountResponseApi]:
+    async def calc_price(self, subscription: Subscription, discount: SubsDiscount) -> float:
         """
         Вычисление цены подписки после скидки
 
-        :param subs_id: id подписки
+        :param subscription: подписка
+        :param discount: скидка
         :return: цена после скидки
         """
 
-        subs = await self.subs.get_subscription_by_id(subs_id=subs_id)
-        if not subs:
-            return False, error_msgs.no_subs
-        discount = await self.get_discount_for_sub(subs_id=subs_id)
-        if not discount or len(discount) == 0:
-            return True, SubsDiscountResponseApi(
-                price_before=subs.price,
-                price_after=subs.price,
-                discount_id=None,
-                subscription_id=subs_id
-            )
-
-        return True, SubsDiscountResponseApi(
-            price_before=subs.price,
-            price_after=subs.price-discount.value,
-            discount_id=discount.id,
-            subscription_id=subs_id
-        )
+        return subscription.price-discount.value
 
     async def mark_discount_as_used(self, discount_id: uuid.UUID, user_id: uuid.UUID):
         """
@@ -91,11 +73,10 @@ class SubsDiscountService:
 
 
 def get_sub_discount_service(
-        postgres: Database = Depends(get_postgres),
-        subs_service: SubscriptionService = Depends(get_subscription_service)
+        postgres: Database = Depends(get_postgres)
 ) -> SubsDiscountService:
     """
     Провайдер SubsDiscountService,
-    с помощью Depends он сообщает, что ему необходимы Database и SubscriptionService
+    с помощью Depends он сообщает, что ему необходимы Database
     """
-    return SubsDiscountService(postgres, subs_service)
+    return SubsDiscountService(postgres)
