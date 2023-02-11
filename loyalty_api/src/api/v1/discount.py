@@ -1,8 +1,10 @@
 import uuid
 from http import HTTPStatus
+import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
 
+from src.core.config import settings
 from src.core.error_messages import error_msgs
 from src.core.params import params
 from src.models.discount import SubsDiscountResponseApi, FilmDiscountResponseApi, \
@@ -12,6 +14,7 @@ from src.services.film import FilmService, get_film_service
 from src.services.film_discount import FilmDiscountService, get_film_discount_service
 from src.services.subs_discount import SubsDiscountService, get_sub_discount_service
 from src.services.subscription import SubscriptionService, get_subscription_service
+from src.services.user import UserService, get_user_service
 
 
 router = APIRouter()
@@ -124,6 +127,7 @@ async def get_film_discount_by_film_id(
         user_id: uuid.UUID = params.user_id,
         film_discount_service: FilmDiscountService = Depends(get_film_discount_service),
         film_service: FilmService = Depends(get_film_service),
+        user_service: UserService = Depends(get_user_service),
 ) -> FilmDiscountResponseApi:
     """
     Получение скидки к фильму по id фильма.
@@ -132,20 +136,35 @@ async def get_film_discount_by_film_id(
     :param user_id: id пользователя
     :param film_discount_service: сервис взаимодействия со скидками к фильмам
     :param film_service: сервис взаимодействия с фильмами
+    :param user_service: сервис взаимодействия с пользователями
     :return: Цена со скидкой
     """
 
+    discount = None
     film = await film_service.get_by_id(film_id)
-    if not film[0]:
+    if not film:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
-                            detail=film[1])
-    film = film[1]
-    result = await film_discount_service.calc_price(film=film, user_id=user_id)
-    if not result[0]:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
-                            detail=result[1])
+                            detail=error_msgs.film_not_found)
 
-    return FilmDiscountResponseApi(**{**result[1].dict(), 'tag': film.tag, 'film_id': film_id})
+    if film.tag:
+        discount = await film_discount_service.get_discount(tag=film.tag)
+
+    user = await user_service.get_by_id(user_id=user_id)
+    if not user:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail=error_msgs.user_not_found)
+
+    price_after = await film_discount_service.calc_price(film=film, user=user, discount=discount)
+
+    return FilmDiscountResponseApi(
+        discount_id=discount.id if discount else None,
+        user_id=user.id,
+        subscriber_discount=settings.subscriber_discount if datetime.datetime.today() <= user.subscription_until else 0,
+        price_before=film.price,
+        price_after=price_after,
+        film_id=film.id,
+        tag=film.tag
+    )
 
 
 @router.get('/film/{discount_id}',

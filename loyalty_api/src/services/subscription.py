@@ -7,7 +7,6 @@ from fastapi import Depends
 from httpx import AsyncClient
 
 from src.core.config import settings
-from src.core.error_messages import error_msgs
 from src.db.postgres import get_postgres
 from src.db.request import get_request
 from src.models.subscription import Subscription
@@ -61,17 +60,15 @@ class SubscriptionService:
         query = Subscription.select().filter(Subscription.c.id == subs_id)
         return await self.postgres.fetch_one(query)
 
-    async def mark_trial_subscription_as_used(self, user_id: uuid.UUID) -> tuple[bool, Optional[str]]:
+    async def mark_trial_subscription_as_used(self, subs: Subscription, user_id: uuid.UUID) -> Optional[str]:
         """
         Отметить пробную подписку как использованную пользователем user_id
 
+        :param subs: пробная подписка
         :param user_id: id пользователя
-        :return: (True,) если успешно, иначе (False, описание ошибки)
+        :return: ошибка, если есть
         """
 
-        subs = await self.get_trial_subscription()
-        if not subs:
-            return False, error_msgs.trial_subs_not_found
         response = await self.request.put(
             url=f'{settings.auth_api_url}/user/{user_id}/subscriptions',
             data={
@@ -80,8 +77,7 @@ class SubscriptionService:
             }
         )
         if response.status_code != HTTPStatus.OK:
-            return False, response.text
-        return True, None
+            return response.text
 
 
 def get_subscription_service(

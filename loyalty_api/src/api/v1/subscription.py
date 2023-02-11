@@ -52,10 +52,15 @@ async def mark_trial_subscription_as_used(
     :return: OK
     """
 
-    res = await subs_service.mark_trial_subscription_as_used(body.user_id)
-    if not res[0]:
-        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST,
-                            detail=res[1])
+    subs = await subs_service.get_trial_subscription()
+    if not subs:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+                            detail=error_msgs.trial_subs_not_found)
+
+    res = await subs_service.mark_trial_subscription_as_used(subs=subs, user_id=body.user_id)
+    if res:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=res)
+
     return MessageResponseModel(msg='OK')
 
 
