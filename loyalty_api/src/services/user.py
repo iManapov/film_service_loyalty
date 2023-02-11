@@ -1,3 +1,4 @@
+import datetime
 import uuid
 from typing import Optional
 
@@ -46,7 +47,7 @@ class UserService:
                 user = user.json()['result']
             user['id'] = user.pop('user_id')
             await self.user_cache.set(str(user_id), user)
-
+        user['subscription_until'] = datetime.datetime.strptime(user['subscription_until'], '%Y-%m-%d')
         return User(**user)
 
 
