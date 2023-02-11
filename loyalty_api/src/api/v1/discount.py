@@ -3,12 +3,12 @@ import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
+from src.api.v1.discount_schemas import SubsDiscountResponseApi, FilmDiscountResponseApi
+from src.api.v1.shared_schemas import MessageResponseModel, UserIdBody
 from src.core.config import settings
 from src.core.error_messages import error_msgs
 from src.core.params import params
-from src.models.discount import SubsDiscountResponseApi, FilmDiscountResponseApi, \
-    FilmDiscountModel, SubsDiscountModel
-from src.models.shared import MessageResponseModel, UserIdBody
+from src.models.discount import FilmDiscountModel, SubsDiscountModel
 from src.services.film import FilmService, get_film_service
 from src.services.film_discount import FilmDiscountService, get_film_discount_service
 from src.services.subs_discount import SubsDiscountService, get_sub_discount_service

@@ -2,10 +2,10 @@ import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
+from src.api.v1.shared_schemas import MessageResponseModel, UserIdBody
+from src.api.v1.subscriptions_schemas import SubscriptionApi
 from src.core.error_messages import error_msgs
 from src.core.params import params
-from src.models.subscription import SubscriptionApi
-from src.models.shared import MessageResponseModel, UserIdBody
 from src.services.subscription import SubscriptionService, get_subscription_service
 
 
