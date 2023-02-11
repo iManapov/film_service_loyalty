@@ -1,8 +1,7 @@
 import uuid
-from http import HTTPStatus
 from typing import Optional
 
-from fastapi import Depends
+from fastapi import Depends, status
 from httpx import AsyncClient
 
 from src.core.config import settings
@@ -36,7 +35,7 @@ class FilmService:
             film['id'] = film_id
         else:
             film = await self.request.get(f'{settings.film_api_url}/films/{film_id}')
-            if film.status_code != HTTPStatus.OK:
+            if film.status_code != status.HTTP_200_OK:
                 return
             film = film.json()
             film['id'] = film.pop('uuid')

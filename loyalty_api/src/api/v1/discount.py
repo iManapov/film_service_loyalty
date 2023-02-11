@@ -1,8 +1,7 @@
 import uuid
-from http import HTTPStatus
 import datetime
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.core.config import settings
 from src.core.error_messages import error_msgs
@@ -41,7 +40,7 @@ async def get_subscriptions_discount_by_subscription_id(
 
     subs = await subs_service.get_subscription_by_id(subs_id)
     if not subs:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=error_msgs.no_subs)
 
     discount = await subs_discount_service.get_discount_for_sub(subs_id=subs.id)
@@ -83,7 +82,7 @@ async def get_subscription_discount_by_discount_id(
 
     discount = await subs_discount_service.get_discount_by_id(discount_id=discount_id)
     if not discount:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=error_msgs.discount_not_found)
 
     return discount
@@ -110,7 +109,7 @@ async def mark_subs_discount_as_used(
 
     discount = await subs_discount_service.get_discount_by_id(discount_id=discount_id)
     if not discount:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=error_msgs.discount_not_found)
     await subs_discount_service.mark_discount_as_used(discount_id=discount_id, user_id=body.user_id)
 
@@ -143,7 +142,7 @@ async def get_film_discount_by_film_id(
     discount = None
     film = await film_service.get_by_id(film_id)
     if not film:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=error_msgs.film_not_found)
 
     if film.tag:
@@ -151,7 +150,7 @@ async def get_film_discount_by_film_id(
 
     user = await user_service.get_by_id(user_id=user_id)
     if not user:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=error_msgs.user_not_found)
 
     price_after = await film_discount_service.calc_price(film=film, user=user, discount=discount)
@@ -186,7 +185,7 @@ async def get_film_discount_by_discount_id(
 
     discount = await film_discount_service.get_by_id(discount_id=discount_id)
     if not discount:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=error_msgs.discount_not_found)
 
     return discount
@@ -213,7 +212,7 @@ async def mark_film_discount_as_used(
 
     discount = await film_discount_service.get_by_id(discount_id=discount_id)
     if not discount:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=error_msgs.discount_not_found)
     await film_discount_service.mark_discount_as_used(discount_id=discount_id, user_id=body.user_id)
 

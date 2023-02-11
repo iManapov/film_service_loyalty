@@ -1,9 +1,8 @@
 import uuid
-from http import HTTPStatus
 from typing import Optional
 
 from aioredis import Redis
-from fastapi import Depends
+from fastapi import Depends, status
 from httpx import AsyncClient
 
 from src.core.config import settings
@@ -42,7 +41,7 @@ class UserService:
                 user['user_id'] = str(user_id)
             else:
                 user = await self.request.get(f'{settings.auth_api_url}/user/{user_id}/subscriptions')
-                if user.status_code != HTTPStatus.OK:
+                if user.status_code != status.HTTP_200_OK:
                     return
                 user = user.json()['result']
             user['id'] = user.pop('user_id')
