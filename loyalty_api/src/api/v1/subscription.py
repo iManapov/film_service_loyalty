@@ -1,12 +1,11 @@
 import uuid
-from http import HTTPStatus
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 
+from src.api.v1.shared_schemas import MessageResponseModel, UserIdBody
+from src.api.v1.subscriptions_schemas import SubscriptionApi
 from src.core.error_messages import error_msgs
 from src.core.params import params
-from src.models.subscription import SubscriptionApi
-from src.models.shared import MessageResponseModel, UserIdBody
 from src.services.subscription import SubscriptionService, get_subscription_service
 
 
@@ -30,7 +29,7 @@ async def get_subscriptions(
 
     subs = await subs_service.get_subscriptions()
     if not subs:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=error_msgs.no_subs)
     return subs
 
@@ -52,10 +51,15 @@ async def mark_trial_subscription_as_used(
     :return: OK
     """
 
-    res = await subs_service.mark_trial_subscription_as_used(body.user_id)
-    if not res[0]:
-        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST,
-                            detail=res[1])
+    subs = await subs_service.get_trial_subscription()
+    if not subs:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=error_msgs.trial_subs_not_found)
+
+    res = await subs_service.mark_trial_subscription_as_used(subs=subs, user_id=body.user_id)
+    if res:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=res)
+
     return MessageResponseModel(msg='OK')
 
 
@@ -76,7 +80,7 @@ async def get_trial_subscription(
 
     subs = await subs_service.get_trial_subscription()
     if not subs:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=error_msgs.no_subs)
     return subs
 
@@ -98,7 +102,7 @@ async def get_paid_subscriptions(
 
     subs = await subs_service.get_paid_subscriptions()
     if not subs:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=error_msgs.no_subs)
     return subs
 
@@ -122,6 +126,6 @@ async def get_subscriptions_by_id(
 
     sub = await subs_service.get_subscription_by_id(subs_id=subs_id)
     if not sub:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND,
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=error_msgs.no_subs)
     return sub
