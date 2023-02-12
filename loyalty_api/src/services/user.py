@@ -10,7 +10,7 @@ from src.core.config import settings
 from src.core.test_data import test_data
 from src.db.request import get_request
 from src.db.redis import get_redis_users
-from src.models.user import User
+from src.schemas.user import User
 from src.utils.cache import AbstractCache, RedisCache
 
 
