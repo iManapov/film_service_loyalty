@@ -1,7 +1,8 @@
 from http import HTTPStatus
 import pytest
 
-from tests.functional.testdata.discount_data import discount_value, discount_sub_id, discount_id, film_id, invalid_id, user_id
+from tests.functional.testdata.discount_data import discount_value, discount_sub_id, discount_id, film_id, invalid_id, \
+    user_id, film_id_with_tag
 from tests.functional.testdata.subscription_data import sub_id
 
 pytestmark = pytest.mark.asyncio
@@ -94,6 +95,11 @@ async def test_discount_sub_put(make_put_request, query_data, expected_answer, u
         ),
         (
                 '/api/v1/discounts/film/price',
+                {"film_id": film_id_with_tag, 'user_id': user_id},
+                {'status': HTTPStatus.OK}
+        ),
+        (
+                '/api/v1/discounts/film/price',
                 {'user_id': user_id},
                 {'status': HTTPStatus.UNPROCESSABLE_ENTITY, 'error_msg': 'value_error.missing'}
         ),
@@ -110,8 +116,10 @@ async def test_discount_film(make_get_request, check_cache_discount, check_cache
 
     # 2. Проверяем ответ
     assert status == expected_answer['status']
-    if 'price_before' in body:
+    if 'price_before' in body and body['discount_id']:
         assert (body['price_before'] - discount_value) * (1 - body['subscriber_discount'] / 100) == body['price_after']
+    elif 'price_before' in body:
+        assert body['price_before'] * (1 - body['subscriber_discount'] / 100) == body['price_after']
     if status == HTTPStatus.UNPROCESSABLE_ENTITY:
         assert body['detail'][0]['type'] == expected_answer['error_msg']
     elif status == HTTPStatus.OK and url == '/api/v1/discounts/films':
