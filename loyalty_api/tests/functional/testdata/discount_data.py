@@ -9,6 +9,8 @@ discount_sub_id = 'aadfcfb6-7e2e-46da-a151-f0e399b63d20'
 discount_id = 'aadfcfb6-7e2e-46da-a151-f0e399b63d21'
 discount_value = 300
 film_id = list(test_data.films.keys())[0]
+film_id_with_tag = list(test_data.films.keys())[1]
+film_tag = 'fantastic'
 invalid_id = '3fa85f64-5717-4562-b3fc-2c963f66afa6'
 user_id = list(test_data.user_subs.keys())[random.randint(0, 2)]
 
@@ -50,7 +52,7 @@ pg_discount_film_data = [
         "enabled": True,
         "period_begin": datetime.datetime.today(),
         "period_end": datetime.datetime.today() + datetime.timedelta(days=10),
-        "tag": film_id,
+        "tag": film_tag,
     }
     for _ in range(1)
 ]
@@ -64,6 +66,6 @@ pg_discount_film_data.append(
         "enabled": True,
         "period_begin": datetime.datetime.today(),
         "period_end": datetime.datetime.today() + datetime.timedelta(days=10),
-        "tag": film_id,
+        "tag": film_tag,
     }
 )
