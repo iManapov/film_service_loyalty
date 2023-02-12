@@ -10,6 +10,7 @@ import uvicorn
 from src.api.v1 import promo_code, subscription, discount
 from src.core.config import settings
 from src.core.logger import LOGGING
+from src.core.error_messages import error_msgs
 from src.db import redis, postgres, request
 
 app = FastAPI(
@@ -20,6 +21,8 @@ app = FastAPI(
     default_response_class=ORJSONResponse,
     version='1.0.0'
 )
+
+logger = logging.getLogger(__name__)
 
 
 @app.on_event('startup')
@@ -49,10 +52,13 @@ app.include_router(discount.router, prefix='/api/v1/discounts', tags=['Discounts
 
 
 if __name__ == '__main__':
-    uvicorn.run(
-        'main:app',
-        host='0.0.0.0',
-        port=8009,
-        log_config=LOGGING,
-        log_level=logging.DEBUG,
-    )
+    if not settings.is_production:
+        uvicorn.run(
+            'main:app',
+            host='0.0.0.0',
+            port=8009,
+            log_config=LOGGING,
+            log_level=logging.DEBUG,
+        )
+    else:
+        logger.error(error_msgs.is_production)

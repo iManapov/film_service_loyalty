@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     discount_cache_expire_in_seconds = 5 * 60  # 5 minutes
     film_cache_expire_in_seconds = 5 * 60  # 5 minutes
 
+    is_production: bool = Field(False, env='IS_PRODUCTION')
     is_functional_testing: bool = Field(False, env='IS_FUNCTIONAL_TESTING')
 
     redis_host: str = Field('localhost', env="REDIS_HOST")

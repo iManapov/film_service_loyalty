@@ -5,8 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from src.core.error_messages import error_msgs
 from src.core.params import params
-from src.models.subscription import SubscriptionApi
-from src.models.shared import MessageResponseModel, UserIdBody
+from src.schemas.subscription import SubscriptionApi
+from src.schemas.shared import MessageResponseModel, UserIdBody
 from src.services.subscription import SubscriptionService, get_subscription_service
 
 

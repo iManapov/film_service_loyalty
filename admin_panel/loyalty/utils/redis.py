@@ -36,7 +36,6 @@ class RedisCache(AbstractCache):
     """Класс кэша Redis"""
 
     redis: Redis
-    expiration_time: int
 
     def get(self, key: str) -> Union[dict, None]:
         """

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 @dataclass
 class ErrorMsg:
     """Класс сообщений об ошибках."""
+    is_production: str = 'This is production!'
 
     not_found: str = 'Not found'
     bad_request: str = 'Bad request: errors in parameters'

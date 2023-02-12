@@ -1,6 +1,6 @@
 import uuid
 
-from src.models.mixin import JsonMixin
+from src.schemas.mixin import JsonMixin
 
 
 class MessageResponseModel(JsonMixin):

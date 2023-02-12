@@ -32,6 +32,7 @@ POSTGRES_PSWD - пароль Postgres
 AUTH_API_URL - url от api авторизации (http://localhost:5001/api/v1)
 FILM_API_URL - - url от api с фильмами (http://localhost:8001/api/v1)
 IS_FUNCTIONAL_TESTING - флаг для функциональных тестов (тестовые данные)
+IS_PRODUCTION - переключение между dev/production
 ```
 
 Для запуска api в `Docker` необходимо выполнить команду
