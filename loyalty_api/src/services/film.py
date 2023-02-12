@@ -7,7 +7,7 @@ from httpx import AsyncClient
 from src.core.config import settings
 from src.core.test_data import test_data
 from src.db.request import get_request
-from src.models.film import Film
+from src.schemas.film import Film
 
 
 class FilmService:

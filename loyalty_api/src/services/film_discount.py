@@ -12,9 +12,10 @@ from src.core.config import settings
 from src.db.postgres import get_postgres
 from src.db.redis import get_redis_discounts, get_redis_users
 from src.db.request import get_request
-from src.models.film import Film
-from src.models.discount import FilmsDiscount, FilmDiscountModel, FilmsDiscountUsage
-from src.models.user import User
+from src.schemas.film import Film
+from src.schemas.discount import FilmDiscountResponse, FilmDiscountModel
+from src.models.discount import FilmsDiscount, FilmsDiscountUsage
+from src.schemas.user import User
 from src.utils.cache import AbstractCache, RedisCache
 from src.utils.row_to_dict import row_to_dict
 

@@ -1,6 +1,6 @@
 from datetime import datetime
 import uuid
-from src.models.mixin import JsonMixin
+from src.schemas.mixin import JsonMixin
 
 
 class User(JsonMixin):

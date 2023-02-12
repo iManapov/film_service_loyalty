@@ -7,6 +7,7 @@ from sqlalchemy import and_
 
 from src.db.postgres import get_postgres
 from src.models.discount import SubsDiscount, SubsDiscountUsage
+from src.schemas.discount import SubsDiscountResponseApi
 from src.models.subscription import Subscription
 
 

@@ -4,11 +4,11 @@ import datetime
 from fastapi import APIRouter, Depends, HTTPException, status
 import pytz
 
-from src.api.v1.promo_code_shemas import BasePromoApi, FilmPromoPriceApi, SubsPromoPriceApi
-from src.api.v1.shared_schemas import MessageResponseModel, UserIdBody
 from src.core.error_messages import error_msgs
 from src.core.params import params
 from src.models.promo_code import PromoCode
+from src.schemas.promo_code import BasePromoApi, FilmPromoPriceApi, SubsPromoPriceApi
+from src.schemas.shared import MessageResponseModel, UserIdBody
 from src.services.film import FilmService, get_film_service
 from src.services.promo_code import PromoCodeService, get_promo_service
 from src.services.subscription import SubscriptionService, get_subscription_service

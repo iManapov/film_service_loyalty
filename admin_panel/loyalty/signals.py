@@ -1,3 +1,5 @@
+import logging
+
 import redis
 
 from django.db.models.signals import post_delete, post_save
@@ -7,6 +9,8 @@ from loyalty.models import DiscountFilm
 from loyalty.utils.redis import AbstractCache, RedisCache
 from config import settings
 
+
+logger = logging.getLogger(__name__)
 
 @receiver([post_delete, post_save,], sender=DiscountFilm)
 def signal_clear_cache(sender, instance, using, **kwargs):
@@ -26,7 +30,7 @@ def del_cache(row):
         redis_cache = redis.from_url(
             f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}", db=int(settings.REDIS_DB)
         )
-        cache = RedisCache(redis=redis_cache, expiration_time=settings.REDIS_EXPIRATION)
+        cache = RedisCache(redis=redis_cache)
         cache.delete(row.tag)
-    except Exception:
-        pass
+    except Exception as e:
+        logger.error(e)
