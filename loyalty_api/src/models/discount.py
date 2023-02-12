@@ -59,3 +59,34 @@ FilmsDiscountUsage = sqlalchemy.Table(
     sqlalchemy.Column("user_id", UUID(), nullable=False),
     sqlalchemy.Column("used_at", sqlalchemy.DateTime(timezone=True), nullable=False),
 )
+<<<<<<< HEAD
+=======
+
+
+class SubsDiscountModel(JsonMixin):
+    """Модель скидки к подписке"""
+
+    id: uuid.UUID
+    subscription_id: uuid.UUID
+    value: float
+    title: Optional[str]
+    period_begin: datetime
+    period_end: datetime
+    enabled: bool
+    created_at: datetime
+    updated_at: datetime
+
+
+class FilmDiscountModel(JsonMixin):
+    """Модель скидки к фильму"""
+
+    id: uuid.UUID
+    tag: str
+    value: float
+    title: Optional[str]
+    period_begin: datetime
+    period_end: datetime
+    enabled: bool
+    created_at: datetime
+    updated_at: datetime
+>>>>>>> 3d0a92849890ab98870707b4c8c2514ac727aab2

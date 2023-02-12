@@ -1,6 +1,5 @@
 import uuid
 import datetime
-from http import HTTPStatus
 
 from aioredis import Redis
 from databases import Database
@@ -10,14 +9,13 @@ import pytz
 from sqlalchemy import and_
 
 from src.core.config import settings
-from src.core.error_messages import error_msgs
-from src.core.test_data import test_data
 from src.db.postgres import get_postgres
 from src.db.redis import get_redis_discounts, get_redis_users
 from src.db.request import get_request
 from src.schemas.film import Film
 from src.schemas.discount import FilmDiscountResponse, FilmDiscountModel
 from src.models.discount import FilmsDiscount, FilmsDiscountUsage
+from src.schemas.user import User
 from src.utils.cache import AbstractCache, RedisCache
 from src.utils.row_to_dict import row_to_dict
 
@@ -77,49 +75,27 @@ class FilmDiscountService:
 
         return discount
 
-    async def calc_price(self, film: Film, user_id: uuid.UUID) -> tuple[bool, FilmDiscountResponse]:
+    async def calc_price(self, film: Film, user: User, discount: FilmsDiscount) -> float:
         """
         Вычисление цены фильма после применения скидок
 
         :param film: фильм
-        :param user_id: id пользователя
+        :param user: пользователь
+        :param discount: скидка на фильм
         :return: цена после применения скидка
         """
 
-        discount_id, discount_value = None, 0
-
-        if film.tag:
-            discount = await self.get_discount(tag=film.tag)
-            if discount:
-                discount_id, discount_value = discount.id, discount.value
-
-        user = await self.user_cache.get(str(user_id))
-        if not user:
-            if settings.is_functional_testing:
-                user = test_data.user_subs.get(str(user_id))
-                if not user:
-                    return False, error_msgs.user_not_found
-                user['user_id'] = str(user_id)
-            else:
-                user = await self.request.get(f'{settings.auth_api_url}/user/{user_id}/subscriptions')
-                if user.status_code != HTTPStatus.OK:
-                    return False, error_msgs.user_not_found
-                user = user.json()['result']
-            await self.user_cache.set(str(user_id), user)
+        discount_value = 0
+        if discount:
+            discount_value = discount.value
 
         price_after = film.price - discount_value
-        subs_discount = 0
-        if datetime.datetime.today() <= datetime.datetime.strptime(user['subscription_until'], '%Y-%m-%d'):
+
+        if datetime.datetime.today() <= user.subscription_until:
             subs_discount = float(settings.subscriber_discount)
             price_after = (film.price - discount_value) * (1 - subs_discount / 100)
 
-        return True, FilmDiscountResponse(
-            discount_id=discount_id,
-            user_id=user_id,
-            subscriber_discount=subs_discount,
-            price_before=film.price,
-            price_after=price_after
-        )
+        return price_after
 
     async def mark_discount_as_used(self, discount_id: uuid.UUID, user_id: uuid.UUID):
         """
