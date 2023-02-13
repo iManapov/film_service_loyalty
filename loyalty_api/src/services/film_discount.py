@@ -13,7 +13,7 @@ from src.db.postgres import get_postgres
 from src.db.redis import get_redis_discounts, get_redis_users
 from src.db.request import get_request
 from src.schemas.film import Film
-from src.schemas.discount import FilmDiscountResponse, FilmDiscountModel
+from src.schemas.discount import FilmDiscountModel
 from src.models.discount import FilmsDiscount, FilmsDiscountUsage
 from src.schemas.user import User
 from src.utils.cache import AbstractCache, RedisCache

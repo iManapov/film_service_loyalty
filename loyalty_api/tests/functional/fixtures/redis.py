@@ -2,14 +2,14 @@ import json
 from typing import Union
 
 import aioredis
-import pytest
+import pytest_asyncio
 
 from aioredis import Redis
 
 from tests.functional.settings import test_settings
 
 
-@pytest.fixture(scope="session")
+@pytest_asyncio.fixture(scope="session")
 async def redis_discount():
     """
     Фикстура для установления соединения с Redis
@@ -21,7 +21,7 @@ async def redis_discount():
     redis_discount_cache.close()
 
 
-@pytest.fixture(scope="session")
+@pytest_asyncio.fixture(scope="session")
 async def redis_user():
     """
     Фикстура для установления соединения с Redis
@@ -32,7 +32,7 @@ async def redis_user():
     user_cache.close()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 def check_cache_discount(redis_discount: Redis):
     """
     Фикстура для проверки результата запроса в кеше
@@ -46,7 +46,8 @@ def check_cache_discount(redis_discount: Redis):
 
     return inner
 
-@pytest.fixture
+
+@pytest_asyncio.fixture
 def check_cache_user(redis_user: Redis):
     """
     Фикстура для проверки результата запроса в кеше

@@ -1,10 +1,10 @@
-import pytest
+import pytest_asyncio
 import aiohttp
 
 from tests.functional.settings import test_settings
 
 
-@pytest.fixture(scope="session")
+@pytest_asyncio.fixture(scope="session")
 async def http_session():
     """
     Фикстура для установления соединения по
@@ -15,7 +15,7 @@ async def http_session():
     await session.close()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 def make_get_request(http_session: aiohttp.ClientSession):
     """
     Фикстура для выполнения запроса GET к API
@@ -30,7 +30,7 @@ def make_get_request(http_session: aiohttp.ClientSession):
     return inner
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 def make_put_request(http_session: aiohttp.ClientSession):
     """
     Фикстура для выполнения запроса PUT к API

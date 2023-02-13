@@ -9,7 +9,7 @@ class TestSettings(BaseSettings):
     service_url: str = Field("http://localhost:8009", env="FAST_API_URL")
     postgres_host: str = Field('localhost', env='POSTGRES_HOST')
     postgres_port: int = Field(5432, env='POSTGRES_PORT')
-    postgres_db: str = Field('movies_database', env='POSTGRES_DB')
+    postgres_db: str = Field('loyalty_api', env='POSTGRES_DB')
     postgres_user: str = Field('app', env='POSTGRES_USER')
     postgres_pswd: str = Field('123qwe', env='POSTGRES_PSWD')
 
@@ -24,7 +24,7 @@ class TestSettings(BaseSettings):
                f"{self.postgres_port}/{self.postgres_db}?currentSchema=loyalty"
 
     class Config:
-        env_file = "../.env"
+        env_file = "tests/functional/.env"
         env_file_encoding = "utf-8"
 
 

@@ -1,9 +1,9 @@
 import databases
-import pytest
+import pytest_asyncio
 
 from databases import Database
 
-from functional.testdata.discount_data import pg_discount_sub_data, pg_discount_film_data
+from tests.functional.testdata.discount_data import pg_discount_sub_data, pg_discount_film_data
 from src.models.discount import SubsDiscount, FilmsDiscount
 from src.models.promo_code import PromoCode
 from src.models.subscription import Subscription
@@ -13,7 +13,7 @@ from tests.functional.testdata.subscription_data import pg_sub_data
 from tests.functional.settings import test_settings
 
 
-@pytest.fixture(scope="session")
+@pytest_asyncio.fixture(scope="session")
 async def postgres_client():
     """
     Фикстура для установления соединения с postgresql
@@ -26,7 +26,7 @@ async def postgres_client():
     await postgres_client.disconnect()
 
 
-@pytest.fixture(autouse=True, scope="session")
+@pytest_asyncio.fixture(autouse=True, scope="session")
 async def postgres_clear_data(postgres_client: Database):
     """
     Фикстура для удаления записей в таблицах перед началом тестов.
@@ -44,7 +44,7 @@ async def postgres_clear_data(postgres_client: Database):
     await postgres_client.execute(query)
 
 
-@pytest.fixture(autouse=True, scope="session")
+@pytest_asyncio.fixture(autouse=True, scope="session")
 async def postgres_write_data(postgres_client: Database):
     """
     Фикстура для записи тестовых данных после удаления.

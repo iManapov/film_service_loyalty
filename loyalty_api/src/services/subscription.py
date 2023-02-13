@@ -1,9 +1,8 @@
-from http import HTTPStatus
 import uuid
 from typing import Optional
 
 from databases import Database
-from fastapi import Depends
+from fastapi import Depends, status
 from httpx import AsyncClient
 
 from src.core.config import settings
@@ -76,7 +75,7 @@ class SubscriptionService:
                 'months': subs.months
             }
         )
-        if response.status_code != HTTPStatus.OK:
+        if response.status_code != status.HTTP_200_OK:
             return response.text
 
 
