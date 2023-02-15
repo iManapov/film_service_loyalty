@@ -91,7 +91,7 @@ class FilmDiscountService:
 
         price_after = film.price - discount_value
 
-        if datetime.datetime.today() <= user.subscription_until:
+        if user.subscription_until and datetime.datetime.today() <= user.subscription_until:
             subs_discount = float(settings.subscriber_discount)
             price_after = (film.price - discount_value) * (1 - subs_discount / 100)
 
