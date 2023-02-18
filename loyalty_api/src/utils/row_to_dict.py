@@ -3,10 +3,10 @@ from databases.interfaces import Record
 
 def row_to_dict(row: Record) -> dict:
     """
-    Функция конвертирующая sqlalchemy.Table объект в dict
+    Converts Record object into dict
 
-    :param row: объект sqlalchemy.Table
-    :return: словарь
+    :param row: Record object
+    :return: object as dict
     """
 
     res = {}

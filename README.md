@@ -1,18 +1,19 @@
-# Сервис системы лояльности
-Ссылка на репозиторий:
-https://github.com/san100791/graduate_work
+# Loyalty service
 
 
-## Запуск в Docker
-Предварительно необходимо в корне проекта создать файлы `admin.env` и `api.env`
 
-Параметры `.env` файлов можно найти в
-[admin_panel/README.md](./admin_panel/README.md) 
-и [loyalty_api/README.md](./loyalty_api/README.md) соответственно.
+## Run in Docker
+Firstly create `admin.env` and `api.env` files in the root folder of project
 
-Для запуска api в `Docker` необходимо выполнить команду
+`.env` parameters can be found in 
+[admin_panel/README.md](./admin_panel/README.md) and 
+[loyalty_api/README.md](./loyalty_api/README.md) respectively.
+
+To run api in `Docker` execute following command:
 ```shell
 docker compose up --build
 ```
 
-Адрес документации: http://localhost/api/openapi/
+OpenApi documentation url: http://localhost/api/openapi/
+
+Admin panel url: http://localhost/admin

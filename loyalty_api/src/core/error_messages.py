@@ -3,7 +3,8 @@ from dataclasses import dataclass
 
 @dataclass
 class ErrorMsg:
-    """Класс сообщений об ошибках."""
+    """Error messages class"""
+
     is_production: str = 'This is production!'
 
     not_found: str = 'Not found'

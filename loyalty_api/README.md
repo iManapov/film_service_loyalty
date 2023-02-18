@@ -1,43 +1,36 @@
-# Код FAST API приложения
+# Loyalty Api
 
-## Локальный запуск
-Предварительно необходимо создать файл `src/core/.env` со следующими параметрами:
+## Local run
+Firstly create env file `src/core/.env` with following parameters:
 ```dotenv
-POSTGRES_USER - пользователь Postgres
-POSTGRES_PSWD - пароль Postgres
+POSTGRES_USER - Postgres user
+POSTGRES_PSWD - Postgres password
 ```
 
-Для запуска api под `uvicorn`:
+To run under `uvicorn` execute following commands:
 ```shell
 uvicorn main:app --reload --host localhost --port 8009
 ```
-Для запуска api под `gunicorn`:
+To run under `gunicorn` execute following commands:
 ```shell
 gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornH11Worker --bind 0.0.0.0:8009
 ```
 
-Адрес документации: http://localhost:8009/api/openapi/
+OpenApi documentation url: http://localhost:8009/api/openapi/
 
 
-## Запуск в Docker
-Предварительно необходимо в корне проекта создать файл `.env` со следующими параметрами:
+## Run in Docker
+Env parameters:
 ```dotenv
-REDIS_HOST - хост Redis
-REDIS_PORT - порт Redis
-POSTGRES_HOST - хост Postgres 
-POSTGRES_PORT - порт Postgres
-POSTGRES_DB - название бд в Postgres
-POSTGRES_USER - пользователь Postgres
-POSTGRES_PSWD - пароль Postgres
-AUTH_API_URL - url от api авторизации (http://localhost:5001/api/v1)
-FILM_API_URL - - url от api с фильмами (http://localhost:8001/api/v1)
-IS_FUNCTIONAL_TESTING - флаг для функциональных тестов (тестовые данные)
-IS_PRODUCTION - переключение между dev/production
+REDIS_HOST - Redis host
+REDIS_PORT - Redis port
+POSTGRES_HOST - Postgres host 
+POSTGRES_PORT - Postgres port
+POSTGRES_DB - Postgres database name
+POSTGRES_USER - Postgres user
+POSTGRES_PSWD - Postgres password
+AUTH_API_URL - authorization api url (http://localhost:5001/api/v1)
+FILM_API_URL - film api url (http://localhost:8001/api/v1)
+IS_FUNCTIONAL_TESTING - flag for functional testing
+IS_PRODUCTION - flag for dev/production
 ```
-
-Для запуска api в `Docker` необходимо выполнить команду
-```shell
-docker compose up --build
-```
-
-Адрес документации: http://localhost/api/openapi/

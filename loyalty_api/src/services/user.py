@@ -15,7 +15,7 @@ from src.utils.cache import AbstractCache, RedisCache
 
 
 class UserService:
-    """Сервис взаимодействия с пользователями"""
+    """User service"""
 
     def __init__(
             self,
@@ -27,10 +27,10 @@ class UserService:
 
     async def get_by_id(self, user_id: uuid.UUID) -> Optional[User]:
         """
-        Получение пользователя по id
+        Returns user by id
 
-        :param user_id: id пользователя
-        :return: пользователь
+        :param user_id: user id
+        :return: user
         """
 
         user = await self.user_cache.get(str(user_id))
@@ -56,8 +56,8 @@ def get_user_service(
         user_cache: Redis = Depends(get_redis_users),
 ) -> UserService:
     """
-    Провайдер UserService,
-    с помощью Depends он сообщает, что ему необходимы AsyncClient и Redis
+    UserService provider
+    using 'Depends', it says that it needs AsyncClient and Redis
     """
 
     return UserService(

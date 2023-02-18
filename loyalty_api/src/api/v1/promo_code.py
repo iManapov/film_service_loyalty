@@ -19,19 +19,19 @@ router = APIRouter()
 
 @router.get('/search',
             response_model=BasePromoApi,
-            summary="Информация по одному промокоду по его коду",
-            description="Детальная информация по отдельному промокоду по его коду",
+            summary="Information about promocode by code",
+            description="Information about promocode by code",
             )
 async def get_promo_by_code(
         promo_code: str = params.promo_code,
         promo_service: PromoCodeService = Depends(get_promo_service)
 ) -> PromoCode:
     """
-    Возвращает информацию промокода по коду.
+    Returns information about promocode by code
 
-    :param promo_code: промокод
-    :param promo_service: сервис взаимодействия с промокодами
-    :return: промокод
+    :param promo_code: promo code
+    :param promo_service: promo code service
+    :return: promocode
     """
 
     promo = await promo_service.get_by_name(promo_code)
@@ -43,8 +43,8 @@ async def get_promo_by_code(
 
 @router.get('/film/price',
             response_model=FilmPromoPriceApi,
-            summary="Цена фильма после применения промокода",
-            description="Возвращает цену фильма после применения промокода",
+            summary="Film price after applying promocode",
+            description="Film price after applying promocode",
             )
 async def get_film_price_after_promocode(
         promo_code: str = params.promo_code,
@@ -54,14 +54,14 @@ async def get_film_price_after_promocode(
         film_service: FilmService = Depends(get_film_service)
 ) -> FilmPromoPriceApi:
     """
-    Возвращает цену фильма после применения промокода
+    Returns film price after applying promocode
 
-    :param promo_code: Промокод
-    :param user_id: id пользователя
-    :param film_id: id фильма
-    :param promo_service: сервис взаимодействия с промокодами
-    :param film_service: сервис взаимодействия с фильмами
-    :return: цена после применения промокода
+    :param promo_code: promo code
+    :param user_id: user id
+    :param film_id: film id
+    :param promo_service: promo code service
+    :param film_service: film service
+    :return: price after applying promo code
     """
 
     film = await film_service.get_by_id(film_id)
@@ -97,8 +97,8 @@ async def get_film_price_after_promocode(
 
 @router.get('/subscription/price',
             response_model=SubsPromoPriceApi,
-            summary="Цена подписки после применения промокода",
-            description="Возвращает цену подписки после применения промокода",
+            summary="Subscription price after applying promocode",
+            description="Subscription price after applying promocode",
             )
 async def get_subs_price_after_promocode(
         promo_code: str = params.promo_code,
@@ -108,14 +108,14 @@ async def get_subs_price_after_promocode(
         subs_service: SubscriptionService = Depends(get_subscription_service)
 ) -> SubsPromoPriceApi:
     """
-    Возвращает цену подписки после применения промокода
+    Returns subscription price after applying promocode
 
-    :param promo_code: Промокод
-    :param user_id: id пользователя
-    :param subs_id: id подписки
-    :param promo_service: сервис взаимодействия с промокодами
-    :param subs_service: сервис взаимодействия с подписками
-    :return: цена после применения промокода
+    :param promo_code: promo code
+    :param user_id: user id
+    :param subs_id: subscriptions id
+    :param promo_service: promo code service
+    :param subs_service: subscriptions service
+    :return: price after applying promo code
     """
 
     subs = await subs_service.get_subscription_by_id(subs_id)
@@ -151,8 +151,8 @@ async def get_subs_price_after_promocode(
 
 @router.put('/{promo_id}',
             response_model=MessageResponseModel,
-            summary="Отметить промокод как использованный",
-            description="Отметить промокод с promo_id как использованный для пользователя с user_id",
+            summary="Mark promocode as used",
+            description="Mark promocode with promo_id as used by user with user_id",
             )
 async def mark_promo_used_by_user(
         body: UserIdBody,
@@ -160,11 +160,11 @@ async def mark_promo_used_by_user(
         promo_service: PromoCodeService = Depends(get_promo_service)
 ):
     """
-    Отмечает промокод как использованный
+    Marks promocode as used
 
-    :param body: тело запроса
-    :param promo_id: id промокода
-    :param promo_service: сервис взаимодействия с промокодами
+    :param body: request body
+    :param promo_id: promocode id
+    :param promo_service: promo code service
     :return: OK
     """
 
@@ -178,19 +178,19 @@ async def mark_promo_used_by_user(
 
 @router.get('/{promo_id}',
             response_model=BasePromoApi,
-            summary="Информация по одному промокоду по его id",
-            description="Детальная информация по отдельному промокоду по его id",
+            summary="Information about promocode by id",
+            description="Information about promocode by id",
             )
 async def get_promo_by_id(
         promo_id: uuid.UUID = params.promo_id,
         promo_service: PromoCodeService = Depends(get_promo_service)
 ) -> PromoCode:
     """
-    Возвращает информацию промокода по id
+    Returns information about promocode by id
 
-    :param promo_id: id промокода
-    :param promo_service: сервис взаимодействия с промокодами
-    :return: промокод
+    :param promo_id: promocode id
+    :param promo_service: promo code service
+    :return: promocode
     """
 
     promo = await promo_service.get_by_id(promo_id)

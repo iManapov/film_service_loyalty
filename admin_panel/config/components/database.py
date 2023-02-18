@@ -12,7 +12,6 @@ DATABASES = {
         'HOST': os.environ.get('DB_HOST'),
         'PORT': os.environ.get('DB_PORT', 5432),
         'OPTIONS': {
-            # указываем схемы, с которыми будет работать приложение
             'options': f"-c search_path=public,{DB_SCHEME}"
         }
     }

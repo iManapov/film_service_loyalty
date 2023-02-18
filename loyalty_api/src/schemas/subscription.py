@@ -7,7 +7,7 @@ from src.schemas.mixin import JsonMixin
 
 
 class SubscriptionApi(JsonMixin):
-    """API-Модель для подробного описания подписок"""
+    """API schema with subscription description"""
 
     id: uuid.UUID
     name: str

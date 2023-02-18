@@ -1,26 +1,31 @@
-# Код панели администратора
+# Loyalty admin panel
 
-## Локальный запуск
-Для запуска панели администратора локально необходимо создать файл `config/.env` со следующими параметрами:
+## Local run
+Firstly create env file `config/.env` with following parameters:
+```dotenv
+DB_HOST - Postgres host
+DB_PORT - Postgres port
+POSTGRES_DB - Postgres database name
+DB_SCHEME - Postgres schema name
+POSTGRES_USER - Postgres user
+POSTGRES_PASSWORD - Postgres password
+REDIS_HOST - Redis host
+REDIS_PORT - Redis port
+REDIS_DB - Redis database
+SECRET_KEY - Django secret key
+DEBUG - flag for debug mode
+```
 
-- DB_HOST - хост БД Postgres
-- DB_PORT - порт БД Postgres
-- POSTGRES_DB - имя БД Postgres
-- DB_SCHEME - имя схемы БД Postgres
-- POSTGRES_USER - пользователь БД Postgres
-- POSTGRES_PASSWORD - пароль БД Postgres
-- REDIS_HOST - хост БД Redis
-- REDIS_PORT - порт БД Redis
-- REDIS_DB - БД Redis
-- SECRET_KEY - секретный ключ Django
-- DEBUG - переключатель режима отладки
+At first run apply database migration executing following command:
 
+```shell
+python manage.py migrate
+```
 
-При первом запуске необходимо применить миграции:
+To run on `8010` port execute command:
 
-`python manage.py migrate`
+```shell
+python manage.py runserver 0.0.0.0:8010
+```
 
-
-Запуск на порту :8000:
-
-`python manage.py runserver 0.0.0.0:8000`
+Admin panel URL: http://localhost:8010/admin

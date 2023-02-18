@@ -6,38 +6,36 @@ from pydantic import Required
 
 @dataclass
 class Params:
-    """
-    Класс параметров запроса API
-    """
+    """API request parameters"""
 
     user_id: Query = Query(
         default=Required,
-        title="Id пользователя"
+        title="User id"
     )
 
     promo_code: Query = Query(
         default=Required,
-        title="Код промокода"
+        title="Promo code"
     )
 
     promo_id: Path = Path(
         default=Required,
-        title="UUID промокода"
+        title="Promocode UUID"
     )
 
     subs_id: Query = Query(
         default=Required,
-        title="UUID подписки"
+        title="Subscription UUID"
     )
 
     discount_id: Path = Path(
         default=Required,
-        title="UUID скидки"
+        title="Discount UUID"
     )
 
     film_id: Query = Query(
         default=Required,
-        title='UUID фильма'
+        title='Film UUID'
     )
 
 

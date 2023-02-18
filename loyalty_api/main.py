@@ -15,7 +15,7 @@ from src.db import redis, postgres, request
 
 app = FastAPI(
     title=settings.project_name,
-    description="Сервис системы лояльности",
+    description="Loyalty service",
     docs_url='/api/openapi',
     openapi_url='/api/openapi.json',
     default_response_class=ORJSONResponse,
@@ -27,7 +27,6 @@ logger = logging.getLogger(__name__)
 
 @app.on_event('startup')
 async def startup():
-    # Подключаемся к базам при старте сервера
     redis.discounts = await aioredis.from_url(f"redis://{settings.redis_host}:{settings.redis_port}", db=1)
     redis.user_cache = await aioredis.from_url(f"redis://{settings.redis_host}:{settings.redis_port}", db=2)
 
@@ -40,7 +39,6 @@ async def startup():
 
 @app.on_event('shutdown')
 async def shutdown():
-    # Отключаемся от баз при выключении сервера
     await redis.discounts.close()
     await redis.user_cache.close()
     await postgres.postgres.disconnect()

@@ -12,7 +12,7 @@ from src.models.subscription import Subscription
 
 
 class SubscriptionService:
-    """Сервис взаимодействия с подписками"""
+    """Subscription service"""
 
     def __init__(self, postgres: Database, request: AsyncClient):
         self.postgres = postgres
@@ -20,9 +20,9 @@ class SubscriptionService:
 
     async def get_subscriptions(self) -> list[Subscription]:
         """
-        Получить все подписки
+        Returns all subscriptions
 
-        :return: список подписок
+        :return: all subscriptions list
         """
 
         query = Subscription.select()
@@ -30,9 +30,9 @@ class SubscriptionService:
 
     async def get_paid_subscriptions(self) -> list[Subscription]:
         """
-        Получить все платные подписки
+        Returns all paid subscriptions
 
-        :return: список подписок
+        :return: all paid subscriptions list
         """
 
         query = Subscription.select().filter(Subscription.c.price > 0)
@@ -40,9 +40,9 @@ class SubscriptionService:
 
     async def get_trial_subscription(self) -> Subscription:
         """
-        Получить пробную подписки
+        Returns trial subscription
 
-        :return: пробная подписок
+        :return: trial subscription
         """
 
         query = Subscription.select().filter(Subscription.c.price == 0)
@@ -50,10 +50,10 @@ class SubscriptionService:
 
     async def get_subscription_by_id(self, subs_id: uuid.UUID) -> Subscription:
         """
-        Получение подписки по ее id
+        Returns subscription by id
 
-        :param subs_id: id подписки
-        :return: подписка
+        :param subs_id: subscription id
+        :return: subscription
         """
 
         query = Subscription.select().filter(Subscription.c.id == subs_id)
@@ -61,11 +61,11 @@ class SubscriptionService:
 
     async def mark_trial_subscription_as_used(self, subs: Subscription, user_id: uuid.UUID) -> Optional[str]:
         """
-        Отметить пробную подписку как использованную пользователем user_id
+        Marks trial subscription as used by user with user_id
 
-        :param subs: пробная подписка
-        :param user_id: id пользователя
-        :return: ошибка, если есть
+        :param subs: trial subscription
+        :param user_id: user id
+        :return: error if exists
         """
 
         response = await self.request.put(
@@ -84,7 +84,7 @@ def get_subscription_service(
         request: AsyncClient = Depends(get_request)
 ) -> SubscriptionService:
     """
-    Провайдер SubscriptionService,
-    с помощью Depends он сообщает, что ему необходимы Database и AsyncClient
+    SubscriptionService provider
+    using 'Depends', it says that it needs Database and AsyncClient
     """
     return SubscriptionService(postgres, request)

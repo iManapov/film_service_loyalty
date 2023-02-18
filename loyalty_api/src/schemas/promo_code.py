@@ -7,7 +7,7 @@ from src.schemas.mixin import JsonMixin
 
 
 class BasePromoApi(JsonMixin):
-    """Модель промокода"""
+    """Promocode schema"""
 
     id: uuid.UUID
     user_id: Optional[uuid.UUID]
@@ -21,7 +21,7 @@ class BasePromoApi(JsonMixin):
 
 
 class PromoPrice(JsonMixin):
-    """Модель ответа после применения промокода"""
+    """Base applied promocode schema"""
 
     price_before: float
     price_after: float
@@ -30,8 +30,12 @@ class PromoPrice(JsonMixin):
 
 
 class FilmPromoPriceApi(PromoPrice):
+    """Applied for film promocode schema"""
+
     film_id: uuid.UUID
 
 
 class SubsPromoPriceApi(PromoPrice):
+    """Applied for subscription promocode schema"""
+
     subscription_id: uuid.UUID

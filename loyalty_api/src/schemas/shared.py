@@ -4,10 +4,11 @@ from src.schemas.mixin import JsonMixin
 
 
 class MessageResponseModel(JsonMixin):
-    """Модель ответа сообщением"""
+    """Message response schema"""
+
     msg: str
 
 
 class UserIdBody(JsonMixin):
-    """Модель тела с user_id"""
+    """User id body schema"""
     user_id: uuid.UUID

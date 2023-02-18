@@ -2,9 +2,8 @@ from pydantic import BaseSettings
 
 
 class TestData(BaseSettings):
-    """Класс тестовых данных"""
+    """Test data class"""
 
-    # Лист тестовых пользователей user_id: {}
     user_subs: dict = {
         '6de44714-b38c-4467-9b0b-925a769bfde8': {
             "is_trial_used": True,

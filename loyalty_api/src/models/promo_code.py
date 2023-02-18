@@ -7,7 +7,7 @@ from sqlalchemy.sql import func
 from src.core.config import settings
 
 
-"""Модель промокода в бд"""
+"""Promocode model"""
 PromoCode = sqlalchemy.Table(
     "promocode",
     sqlalchemy.MetaData(schema=settings.postgres_schema),
@@ -23,7 +23,7 @@ PromoCode = sqlalchemy.Table(
 )
 
 
-"""Модель использования промокода в бд"""
+"""Promocode usage model"""
 PromoUsage = sqlalchemy.Table(
     "promo_usage",
     sqlalchemy.MetaData(schema=settings.postgres_schema),

@@ -14,17 +14,17 @@ router = APIRouter()
 
 @router.get('/',
             response_model=list[SubscriptionApi],
-            summary="Получение списка всех подписок",
-            description="Получение списка всех подписок",
+            summary="Get all subscriptions",
+            description="Get all subscriptions",
             )
 async def get_subscriptions(
         subs_service: SubscriptionService = Depends(get_subscription_service)
 ) -> list[SubscriptionApi]:
     """
-    Возвращает все имеющиеся подписки
+    Returns all subscriptions
 
-    :param subs_service: сервис взаимодействия с подписками
-    :return: Список подписок
+    :param subs_service: subscriptions service
+    :return: list of subscriptions
     """
 
     subs = await subs_service.get_subscriptions()
@@ -36,18 +36,18 @@ async def get_subscriptions(
 
 @router.put('/trial',
             response_model=MessageResponseModel,
-            summary="Отметить пробную подписку использованной пользователем user_id",
-            description="Отметить пробную подписку использованной пользователем user_id",
+            summary="Mark trial subscription as used",
+            description="Mark trial subscription as used by user with user_id",
             )
 async def mark_trial_subscription_as_used(
         body: UserIdBody,
         subs_service: SubscriptionService = Depends(get_subscription_service)
 ) -> MessageResponseModel:
     """
-    Отмечает пробную подписку использованной пользователем user_id
+    Marks trial subscription as used
 
-    :param body: тело запроса
-    :param subs_service: сервис взаимодействия с подписками
+    :param body: request body
+    :param subs_service: subscriptions service
     :return: OK
     """
 
@@ -65,17 +65,17 @@ async def mark_trial_subscription_as_used(
 
 @router.get('/trial',
             response_model=SubscriptionApi,
-            summary="Получение пробной подписки",
-            description="Получение пробной подписки",
+            summary="Get trial subscription",
+            description="Get trial subscription",
             )
 async def get_trial_subscription(
         subs_service: SubscriptionService = Depends(get_subscription_service)
 ) -> SubscriptionApi:
     """
-    Возвращает пробную подписку
+    Returns trial subscription
 
-    :param subs_service: сервис взаимодействия с подписками
-    :return: Пробная подписка
+    :param subs_service: subscription service
+    :return: trial subscription
     """
 
     subs = await subs_service.get_trial_subscription()
@@ -87,17 +87,17 @@ async def get_trial_subscription(
 
 @router.get('/paid',
             response_model=list[SubscriptionApi],
-            summary="Получение платных подписок",
-            description="Получение платных подписок",
+            summary="Get paid subscriptions",
+            description="Get paid subscriptions",
             )
 async def get_paid_subscriptions(
         subs_service: SubscriptionService = Depends(get_subscription_service)
 ) -> list[SubscriptionApi]:
     """
-    Возвращает платные подписки
+    Returns paid subscriptions
 
-    :param subs_service: сервис взаимодействия с подписками
-    :return: Платные подписки
+    :param subs_service: subscription service
+    :return: list of paid subscriptions
     """
 
     subs = await subs_service.get_paid_subscriptions()
@@ -109,19 +109,19 @@ async def get_paid_subscriptions(
 
 @router.get('/{subs_id}',
             response_model=SubscriptionApi,
-            summary="Получение информации по одной подписке",
-            description="Получение информации по одной подписке",
+            summary="Get information about subscription",
+            description="Get information about subscription with subs_id",
             )
 async def get_subscriptions_by_id(
         subs_id: uuid.UUID = params.subs_id,
         subs_service: SubscriptionService = Depends(get_subscription_service)
 ) -> SubscriptionApi:
     """
-    Получение подписки по id
+    Returns subscription by id
 
-    :param subs_id: id подписки
-    :param subs_service: сервис взаимодействия с подписками
-    :return: подписка
+    :param subs_id: subscription id
+    :param subs_service: subscription service
+    :return: subscription
     """
 
     sub = await subs_service.get_subscription_by_id(subs_id=subs_id)

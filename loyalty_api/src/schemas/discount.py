@@ -7,7 +7,7 @@ from src.schemas.mixin import JsonMixin
 
 
 class SubsDiscountModel(JsonMixin):
-    """Модель скидки к подписке"""
+    """Subscription discount schema"""
 
     id: uuid.UUID
     subscription_id: uuid.UUID
@@ -20,12 +20,11 @@ class SubsDiscountModel(JsonMixin):
     updated_at: datetime
 
 
-# Redis
 class FilmDiscountModel(JsonMixin):
-    """Модель скидки к фильму"""
+    """Film discount schema"""
 
     id: uuid.UUID
-    tag: str  # key in redis
+    tag: str
     value: float
     title: Optional[str]
     period_begin: datetime
@@ -36,7 +35,7 @@ class FilmDiscountModel(JsonMixin):
 
 
 class SubsDiscountResponseApi(JsonMixin):
-    """Модель ответа после применения скидки к подписке"""
+    """Subscription discount response schema"""
 
     discount_id: Optional[uuid.UUID]
     subscription_id: uuid.UUID
@@ -45,7 +44,7 @@ class SubsDiscountResponseApi(JsonMixin):
 
 
 class FilmDiscountResponse(JsonMixin):
-    """Модель после применения скидки к фильму"""
+    """Film discount response schema"""
 
     discount_id: Optional[uuid.UUID]
     user_id: uuid.UUID
@@ -55,7 +54,7 @@ class FilmDiscountResponse(JsonMixin):
 
 
 class FilmDiscountResponseApi(FilmDiscountResponse):
-    """Модель ответа после применения скидки к фильму"""
+    """Film discount response schema"""
 
     film_id: uuid.UUID
     tag: Optional[str]

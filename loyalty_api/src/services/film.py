@@ -11,7 +11,7 @@ from src.schemas.film import Film
 
 
 class FilmService:
-    """Сервис взаимодействия с фильмами"""
+    """Film service"""
 
     def __init__(
             self,
@@ -21,10 +21,10 @@ class FilmService:
 
     async def get_by_id(self, film_id: uuid.UUID) -> Optional[Film]:
         """
-        Получение фильма по id
+        Returns film by id
 
-        :param film_id: id фильма
-        :return: фильм
+        :param film_id: film id
+        :return: Film object
         """
 
         film_id = str(film_id)
@@ -47,8 +47,8 @@ def get_film_service(
         request: AsyncClient = Depends(get_request)
 ) -> FilmService:
     """
-    Провайдер FilmService,
-    с помощью Depends он сообщает, что ему необходимы AsyncClient
+    FilmService provider
+    using 'Depends', it says that it needs AsyncClient
     """
 
     return FilmService(

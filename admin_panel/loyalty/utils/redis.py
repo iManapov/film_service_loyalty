@@ -1,5 +1,4 @@
 import json
-import uuid
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -7,41 +6,42 @@ from typing import Union
 
 from redis import Redis
 
-from config import settings
-
 
 class AbstractCache(ABC):
-    """Абстрактный класс кэша"""
+    """Abstract cache class"""
 
     @abstractmethod
     def get(self, key: str) -> Union[dict, None]:
         """
-        Получение записи из кэша по ключу
-        :param key: ключ записи
-        :return: содержимое кэша
+        Returns cache record by key
+
+        :param key: record key
+        :return: record
         """
         pass
 
     @abstractmethod
     def delete(self, key: str):
         """
-        Удаление записи из кэша
-        :param key: ключ записи
+        Deletes record from cache by key
+
+        :param key: record key
         """
         pass
 
 
 @dataclass
 class RedisCache(AbstractCache):
-    """Класс кэша Redis"""
+    """Class for Redis cache"""
 
     redis: Redis
 
     def get(self, key: str) -> Union[dict, None]:
         """
-        Получение записи из Redis по ключу
-        :param key: ключ записи
-        :return: содержимое кэша
+        Returns Redis cache record by key
+
+        :param key: record key
+        :return: record
         """
 
         data = self.redis.get(key)
@@ -51,7 +51,9 @@ class RedisCache(AbstractCache):
 
     def delete(self, key: str):
         """
-        Удаление записи из Redis
-        :param key: ключ записи
+        Deletes record from Redis cache by key
+
+        :param key: record key
         """
+
         self.redis.delete(key)

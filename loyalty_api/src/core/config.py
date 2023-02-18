@@ -10,7 +10,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 class Settings(BaseSettings):
-    """Конфиг сервиса"""
+    """Loyalty service config"""
 
     project_name: str = Field('Loyalty API', env="PROJECT_NAME")
     subscriber_discount: int = 20
@@ -36,7 +36,7 @@ class Settings(BaseSettings):
 
     def get_postgres_url(self):
         return f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_pswd}@{self.postgres_host}:" \
-               f"{self.postgres_port}/{self.postgres_db}?currentSchema=loyalty"
+               f"{self.postgres_port}/{self.postgres_db}"
 
     class Config:
         env_file = "src/core/.env"

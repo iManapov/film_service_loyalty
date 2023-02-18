@@ -21,7 +21,7 @@ from src.utils.row_to_dict import row_to_dict
 
 
 class FilmDiscountService:
-    """Сервис взаимодействия со скидками к фильмам"""
+    """Film discount service"""
 
     def __init__(
             self,
@@ -38,10 +38,10 @@ class FilmDiscountService:
 
     async def get_by_id(self, discount_id: uuid.UUID) -> FilmsDiscount:
         """
-        Получение скидки к фильму по id скидки
+        Returns film discount by id
 
-        :param discount_id: id скидки
-        :return: скидка
+        :param discount_id: discount id
+        :return: discount
         """
 
         query = FilmsDiscount.select().filter(FilmsDiscount.c.id == discount_id)
@@ -49,10 +49,10 @@ class FilmDiscountService:
 
     async def get_discount(self, tag: str) -> FilmsDiscount:
         """
-        Получение скидки к фильму по тэгу
+        Returns discount by film tag
 
-        :param tag: тэг фильма
-        :return: скидка
+        :param tag: film tag
+        :return: discount
         """
 
         discount = await self.discount_cache.get(tag)
@@ -75,14 +75,15 @@ class FilmDiscountService:
 
         return discount
 
-    async def calc_price(self, film: Film, user: User, discount: FilmsDiscount) -> float:
+    @staticmethod
+    async def calc_price(film: Film, user: User, discount: FilmsDiscount) -> float:
         """
-        Вычисление цены фильма после применения скидок
+        Returns film price after applying discount
 
-        :param film: фильм
-        :param user: пользователь
-        :param discount: скидка на фильм
-        :return: цена после применения скидка
+        :param film: film
+        :param user: user
+        :param discount: film discount
+        :return: price after applying discount
         """
 
         discount_value = 0
@@ -99,10 +100,10 @@ class FilmDiscountService:
 
     async def mark_discount_as_used(self, discount_id: uuid.UUID, user_id: uuid.UUID):
         """
-        Отметить скидку discount_id как использованную пользователем user_id
+        Marks discount with discount_id as used by user with user_id
 
-        :param discount_id: id скидки
-        :param user_id: id пользователя
+        :param discount_id: discount id
+        :param user_id: user id
         """
 
         query = FilmsDiscountUsage.insert().values(
@@ -121,8 +122,8 @@ def get_film_discount_service(
         request: AsyncClient = Depends(get_request)
 ) -> FilmDiscountService:
     """
-    Провайдер FilmDiscountService,
-    с помощью Depends он сообщает, что ему необходимы Database, Redis и AsyncClient
+    FilmDiscountService provider
+    using 'Depends', it says that it needs Database, Redis and AsyncClient
     """
 
     return FilmDiscountService(

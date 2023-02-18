@@ -7,7 +7,7 @@ from sqlalchemy.sql import func
 from src.core.config import settings
 
 
-"""Модель подписки в бд"""
+"""Subscription model"""
 Subscription = sqlalchemy.Table(
     "subscription",
     sqlalchemy.MetaData(schema=settings.postgres_schema),

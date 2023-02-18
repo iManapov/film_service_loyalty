@@ -11,17 +11,17 @@ from src.models.subscription import Subscription
 
 
 class SubsDiscountService:
-    """Сервис взаимодействия со скидкой к подписке"""
+    """Subscription discount service"""
 
     def __init__(self, postgres: Database):
         self.postgres = postgres
 
     async def get_discount_by_id(self, discount_id: uuid.UUID) -> SubsDiscount:
         """
-        Получение скидки по его id
+        Returns discount by id
 
-        :param discount_id: id скидки
-        :return: скидка
+        :param discount_id: discount id
+        :return: discount
         """
 
         query = SubsDiscount.select().filter(SubsDiscount.c.id == discount_id)
@@ -29,10 +29,10 @@ class SubsDiscountService:
 
     async def get_discount_for_sub(self, subs_id: uuid.UUID) -> SubsDiscount:
         """
-        Получение скидки к подписке по id подписки
+        Returns discount by subscription id
 
-        :param subs_id: id подписки
-        :return: скидка
+        :param subs_id: subscription id
+        :return: subscription
         """
 
         query = SubsDiscount.select().filter(
@@ -44,23 +44,24 @@ class SubsDiscountService:
         )
         return await self.postgres.fetch_one(query=query)
 
-    async def calc_price(self, subscription: Subscription, discount: SubsDiscount) -> float:
+    @staticmethod
+    async def calc_price(subscription: Subscription, discount: SubsDiscount) -> float:
         """
-        Вычисление цены подписки после скидки
+        Returns subscription price after applying discount
 
-        :param subscription: подписка
-        :param discount: скидка
-        :return: цена после скидки
+        :param subscription: subscription
+        :param discount: discount
+        :return: price after applying discount
         """
 
-        return subscription.price-discount.value
+        return subscription.price - discount.value
 
     async def mark_discount_as_used(self, discount_id: uuid.UUID, user_id: uuid.UUID):
         """
-        Отметить скидку discount_id как использованную пользователем user_id
+        Marks discount as used by user with user_id
 
-        :param discount_id: id скидки
-        :param user_id: id пользователя
+        :param discount_id: discount id
+        :param user_id: user id
         """
 
         query = SubsDiscountUsage.insert().values(
@@ -76,7 +77,7 @@ def get_sub_discount_service(
         postgres: Database = Depends(get_postgres)
 ) -> SubsDiscountService:
     """
-    Провайдер SubsDiscountService,
-    с помощью Depends он сообщает, что ему необходимы Database
+    SubsDiscountService provider
+    using 'Depends', it says that it needs Database
     """
     return SubsDiscountService(postgres)

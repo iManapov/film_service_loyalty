@@ -7,7 +7,7 @@ from sqlalchemy.sql import func
 from src.core.config import settings
 
 
-"""Модель скидки к подписке в бд"""
+"""Subscription discount model"""
 SubsDiscount = sqlalchemy.Table(
         "discount_subscription",
         sqlalchemy.MetaData(schema=settings.postgres_schema),
@@ -23,7 +23,7 @@ SubsDiscount = sqlalchemy.Table(
 )
 
 
-"""Модель скидки к фильму в бд"""
+"""Film discount model"""
 FilmsDiscount = sqlalchemy.Table(
         "discount_film",
         sqlalchemy.MetaData(schema=settings.postgres_schema),
@@ -39,7 +39,7 @@ FilmsDiscount = sqlalchemy.Table(
 )
 
 
-"""Модель использования скидок к подписке"""
+"""Subscription discount usage model"""
 SubsDiscountUsage = sqlalchemy.Table(
     "discount_subscription_usage",
     sqlalchemy.MetaData(schema=settings.postgres_schema),
@@ -50,7 +50,7 @@ SubsDiscountUsage = sqlalchemy.Table(
 )
 
 
-"""Модель использования скидок к фильму"""
+"""Film discount usage model"""
 FilmsDiscountUsage = sqlalchemy.Table(
     "discount_film_usage",
     sqlalchemy.MetaData(schema=settings.postgres_schema),

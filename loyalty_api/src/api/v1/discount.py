@@ -21,8 +21,8 @@ router = APIRouter()
 
 @router.get('/subscription/price',
             response_model=SubsDiscountResponseApi,
-            summary="Получение цены подписки после применения скидки",
-            description="Получение цены подписки после применения скидки",
+            summary="Get subscription price after applying discount",
+            description="Get subscription price after applying discount",
             )
 async def get_subscriptions_discount_by_subscription_id(
         subs_id: uuid.UUID = params.subs_id,
@@ -30,12 +30,12 @@ async def get_subscriptions_discount_by_subscription_id(
         subs_discount_service: SubsDiscountService = Depends(get_sub_discount_service)
 ) -> SubsDiscountResponseApi:
     """
-    Возвращает скидку на подписку по ее id.
+    Returns subscription discount by id
 
-    :param subs_id: id подписки
-    :param subs_service: сервис взаимодействия с подписками
-    :param subs_discount_service: сервис взаимодействия со скидками к подпискам
-    :return: Цена со скидкой
+    :param subs_id: subscription id
+    :param subs_service: subscription service
+    :param subs_discount_service: subscription discount service
+    :return: price after discount
     """
 
     subs = await subs_service.get_subscription_by_id(subs_id)
@@ -65,19 +65,19 @@ async def get_subscriptions_discount_by_subscription_id(
 
 @router.get('/subscription/{discount_id}',
             response_model=SubsDiscountModel,
-            summary="Получение информации о скидки для подписки по id",
-            description="Получение информации о скидки для подписки по id",
+            summary="Get information about subscription discount by id",
+            description="Get information about subscription discount by id",
             )
 async def get_subscription_discount_by_discount_id(
         discount_id: uuid.UUID = params.discount_id,
         subs_discount_service: SubsDiscountService = Depends(get_sub_discount_service)
 ) -> SubsDiscountModel:
     """
-    Возвращает информацию о скидке для подписки по id
+    Returns information about subscription discount by id
 
-    :param discount_id: id скидки
-    :param subs_discount_service: сервис взаимодействия со скидками к подпискам
-    :return: Скидка
+    :param discount_id: discount id
+    :param subs_discount_service: subscription discount service
+    :return: discount
     """
 
     discount = await subs_discount_service.get_discount_by_id(discount_id=discount_id)
@@ -90,8 +90,8 @@ async def get_subscription_discount_by_discount_id(
 
 @router.put('/subscription/{discount_id}',
             response_model=MessageResponseModel,
-            summary="Отметить скидку для подписки как примененную",
-            description="Отметить скидки для подписки как примененную",
+            summary="Mark subscription discount as used",
+            description="Mark subscription discount as used",
             )
 async def mark_subs_discount_as_used(
         body: UserIdBody,
@@ -99,11 +99,11 @@ async def mark_subs_discount_as_used(
         subs_discount_service: SubsDiscountService = Depends(get_sub_discount_service)
 ) -> MessageResponseModel:
     """
-    Отмечает скидку для подписки как использованную.
+    Marks subscription discount as used
 
-    :param body: тело запроса
-    :param discount_id: id скидки
-    :param subs_discount_service: сервис взаимодействия со скидками к подпискам
+    :param body: request body
+    :param discount_id: discount id
+    :param subs_discount_service: subscription discount service
     :return: OK
     """
 
@@ -118,8 +118,8 @@ async def mark_subs_discount_as_used(
 
 @router.get('/film/price',
             response_model=FilmDiscountResponseApi,
-            summary="Получение цены фильма после применения скидок",
-            description="Получение цены фильма после применения скидок",
+            summary="Get film price after applying discount",
+            description="Get film price after applying discount",
             )
 async def get_film_discount_by_film_id(
         film_id: uuid.UUID = params.film_id,
@@ -129,14 +129,14 @@ async def get_film_discount_by_film_id(
         user_service: UserService = Depends(get_user_service),
 ) -> FilmDiscountResponseApi:
     """
-    Получение скидки к фильму по id фильма.
+    Returns film discount by film id
 
-    :param film_id: id фильма
-    :param user_id: id пользователя
-    :param film_discount_service: сервис взаимодействия со скидками к фильмам
-    :param film_service: сервис взаимодействия с фильмами
-    :param user_service: сервис взаимодействия с пользователями
-    :return: Цена со скидкой
+    :param film_id: film id
+    :param user_id: user id
+    :param film_discount_service: film discount service
+    :param film_service: film service
+    :param user_service: user service
+    :return: price after discount
     """
 
     discount = None
@@ -168,19 +168,19 @@ async def get_film_discount_by_film_id(
 
 @router.get('/film/{discount_id}',
             response_model=FilmDiscountModel,
-            summary="Получение информации о скидки для фильма по id",
-            description="Получение информации о скидки для фильма по id",
+            summary="Get information about film discount by id",
+            description="Get information about film discount by id",
             )
 async def get_film_discount_by_discount_id(
         discount_id: uuid.UUID = params.discount_id,
         film_discount_service: FilmDiscountService = Depends(get_film_discount_service)
 ) -> FilmDiscountModel:
     """
-    Возвращает информацию о скидке к фильму по id
+    Returns information about film discount by id
 
-    :param discount_id: id скидки
-    :param film_discount_service: сервис взаимодействия со скидками к фильмам
-    :return: скидка
+    :param discount_id: discount id
+    :param film_discount_service: film discount service
+    :return: discount
     """
 
     discount = await film_discount_service.get_by_id(discount_id=discount_id)
@@ -193,8 +193,8 @@ async def get_film_discount_by_discount_id(
 
 @router.put('/film/{discount_id}',
             response_model=MessageResponseModel,
-            summary="Отметить скидку для фильма как примененную",
-            description="Отметить скидку для фильма как примененную",
+            summary="Mark film discount as used",
+            description="Mark film discount as used",
             )
 async def mark_film_discount_as_used(
         body: UserIdBody,
@@ -202,11 +202,11 @@ async def mark_film_discount_as_used(
         film_discount_service: FilmDiscountService = Depends(get_film_discount_service)
 ) -> MessageResponseModel:
     """
-    Отмечает скидку к фильму как использованную.
+    Marks film discount as used
 
-    :param body: тело запроса
-    :param discount_id: id скидки
-    :param film_discount_service: сервис взаимодействия со скидками к фильмам
+    :param body: request body
+    :param discount_id: discount id
+    :param film_discount_service: film discount service
     :return: OK
     """
 

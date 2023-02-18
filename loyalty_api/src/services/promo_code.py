@@ -11,7 +11,7 @@ from src.models.promo_code import PromoCode, PromoUsage
 
 
 class PromoCodeService:
-    """Сервис взаимодействия с промокодами"""
+    """Promocodes service"""
 
     def __init__(self, postgres: Database):
         self.postgres = postgres
@@ -19,10 +19,10 @@ class PromoCodeService:
 
     async def get_by_id(self, promo_id: uuid.UUID) -> PromoCode:
         """
-        Получение промокода по его id
+        Returns promocode by id
 
-        :param promo_id: id промокода
-        :return: промокод
+        :param promo_id: promocode id
+        :return: promocode
         """
 
         query = PromoCode.select().filter(PromoCode.c.id == promo_id)
@@ -30,22 +30,23 @@ class PromoCodeService:
 
     async def get_by_name(self, promo_code: str) -> PromoCode:
         """
-        Получение промокода по его коду (названию)
+        Returns promocode by promo code (string)
 
-        :param promo_code: код промокода
-        :return: промокод
+        :param promo_code: promo code
+        :return: promocode
         """
 
         query = PromoCode.select().filter(PromoCode.c.code == promo_code)
         return await self.postgres.fetch_one(query=query)
 
-    async def calc_price(self, promo: PromoCode, price: float) -> float:
+    @staticmethod
+    async def calc_price(promo: PromoCode, price: float) -> float:
         """
-        Вычисление цены после применения промокода
+        Returns price after applying promocode
 
-        :param promo: промокод
-        :param price: цена фильма/подписки
-        :return: цены после применения промокода
+        :param promo: promocode
+        :param price: film or subscription price
+        :return: price after applying promocode
         """
 
         if promo.measure == '%':
@@ -54,11 +55,11 @@ class PromoCodeService:
 
     async def is_promo_used(self, promo_id: uuid.UUID, user_id: uuid.UUID) -> bool:
         """
-        Проверка использования промокода
+        Checks if promocode is used by user with user_id
 
-        :param promo_id: id промокода
-        :param user_id: id пользователя
-        :return: флаг использования промокода
+        :param promo_id: promocode id
+        :param user_id: user id
+        :return: flag 'is promocode used'
         """
 
         usage_query = PromoUsage.select().filter(and_(PromoUsage.c.promo_id == promo_id,
@@ -70,10 +71,10 @@ class PromoCodeService:
 
     async def mark_promo_as_used(self, promo: PromoCode, user_id: uuid.UUID):
         """
-        Отметить промокод promo как использованную пользователем user_id
+        Marks promocode used by user with user_id
 
-        :param promo: промокод
-        :param user_id: id пользователя
+        :param promo: promocode
+        :param user_id: user id
         """
         query = PromoUsage.insert().values(
             id=uuid.uuid4(),
@@ -88,8 +89,8 @@ def get_promo_service(
         postgres: Database = Depends(get_postgres)
 ) -> PromoCodeService:
     """
-    Провайдер PromoCodeService,
-    с помощью Depends он сообщает, что ему необходимы Database
+    PromoCodeService provider
+    using 'Depends', it says that it needs Database
     """
 
     return PromoCodeService(postgres)

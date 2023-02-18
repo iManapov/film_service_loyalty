@@ -7,42 +7,42 @@ from aioredis import Redis
 
 
 class AbstractCache(ABC):
-    """Абстрактный класс кэша"""
+    """Abstract cache class"""
 
     @abstractmethod
     async def get(self, key: str) -> Union[dict, None]:
         """
-        Получение записи из кэша по ключу
+        Returns record by key
 
-        :param key: ключ записи
-        :return: содержимое кэша
+        :param key: record key
+        :return: record data
         """
         pass
 
     @abstractmethod
     async def set(self, key: str, data: dict):
         """
-        Добавление записи в кэш
+        Adds record to cache
 
-        :param key: ключ записи
-        :param data: содержимое кэша
+        :param key: record key
+        :param data: record data
         """
         pass
 
 
 @dataclass
 class RedisCache(AbstractCache):
-    """Класс кэша Redis"""
+    """Redis cache class"""
 
     redis: Redis
     expiration_time: int
 
     async def get(self, key: str) -> Union[dict, None]:
         """
-        Получение записи из кэша по ключу
+        Returns record by key
 
-        :param key: ключ записи
-        :return: содержимое кэша
+        :param key: record key
+        :return: record data
         """
 
         data = await self.redis.get(key)
@@ -52,10 +52,10 @@ class RedisCache(AbstractCache):
 
     async def set(self, key: str, data: dict):
         """
-        Добавление записи в кэш
+        Adds record to cache
 
-        :param key: ключ записи
-        :param data: содержимое кэша
+        :param key: record key
+        :param data: record data
         """
 
         await self.redis.set(name=key,

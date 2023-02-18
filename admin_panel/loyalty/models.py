@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MinValueValidator
 
 from config import settings
 
@@ -30,8 +30,8 @@ class TimeStampedMixin(models.Model):
 class Subscription(UUIDMixin, TimeStampedMixin):
     name = models.CharField(_('name'), max_length=50)
     description = models.TextField(_('description'), blank=True, null=True)
-    price = models.FloatField(_('price'), validators=[MinValueValidator(0),])
-    months = models.IntegerField(_('months'), validators=[MinValueValidator(0),])
+    price = models.FloatField(_('price'), validators=[MinValueValidator(0)])
+    months = models.IntegerField(_('months'), validators=[MinValueValidator(0)])
 
     def __str__(self):
         return self.name
@@ -47,7 +47,7 @@ class DiscountSubscription(UUIDMixin, TimeStampedMixin):
     subscription = models.ForeignKey(Subscription,
                                      verbose_name=_('subscription'),
                                      on_delete=models.CASCADE)
-    value = models.IntegerField(_('value'), validators=[MinValueValidator(0),])
+    value = models.IntegerField(_('value'), validators=[MinValueValidator(0)])
     enabled = models.BooleanField(_('enabled'), default=False)
     period_begin = models.DateTimeField(_('start_date'))
     period_end = models.DateTimeField(_('end_date'))
@@ -64,7 +64,7 @@ class DiscountSubscription(UUIDMixin, TimeStampedMixin):
 class DiscountFilm(UUIDMixin, TimeStampedMixin):
     title = models.CharField(_('title'), max_length=50)
     tag = models.CharField(_('tag'), max_length=50)
-    value = models.IntegerField(_('value'), validators=[MinValueValidator(0),])
+    value = models.IntegerField(_('value'), validators=[MinValueValidator(0)])
     enabled = models.BooleanField(_('enabled'), default=False)
     period_begin = models.DateTimeField(_('start_date'))
     period_end = models.DateTimeField(_('end_date'))
@@ -94,7 +94,7 @@ class Promocode(UUIDMixin, TimeStampedMixin):
         verbose_name = _('Promocode')
         verbose_name_plural = _('Promocodes')
         constraints = [
-            models.UniqueConstraint(fields=['user_id', 'code', ],
+            models.UniqueConstraint(fields=['user_id', 'code'],
                                     name='user_code_constraint')
         ]
 
